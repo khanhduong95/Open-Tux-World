@@ -10,13 +10,13 @@ The game is played from a third-person view. The player controls the penguin in 
 
 # Controls
 
-W - forward
-S - backward
-A - left
-D - right
-Space - jump
-Left Mouse - hit/shoot
-Right Mouse - aim
+W - forward.
+S - backward.
+A - left.
+D - right.
+Space - jump.
+Left Mouse - hit/shoot.
+Right Mouse - aim.
 
 # License
 
