@@ -1,0 +1,7 @@
+# For GNU/Linux
+
+You can run the game by opening the executable file "game" (Blender not required) or open the game.blend file with Blender, export the blend file as game engine runtime
+
+# For Windows, OSX and other systems supporting Blender
+
+You need to install Blender first, then open the game.blend file with Blender and export it as game engine runtime
