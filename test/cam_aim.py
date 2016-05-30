@@ -16,7 +16,8 @@ def main():
     global start_aim
     global current_frame
     cont = bge.logic.getCurrentController()
-    cam = bge.logic.getCurrentScene().objects["Camera"]    
+    cam = bge.logic.getCurrentScene().objects["cam_holder"]    
+#    cam = bge.logic.getCurrentScene().objects["Camera"]    
     cam_pos = bge.logic.getCurrentScene().objects["cam_pos"]    
     cam_dir = bge.logic.getCurrentScene().objects["cam_dir"]
     

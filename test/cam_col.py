@@ -13,7 +13,7 @@ def main():
     #cam = cont.owner
     scene = logic.getCurrentScene()
     
-    cam = scene.objects["Camera"]
+    cam = scene.objects["cam_holder"]
     target = scene.objects["cam_pos"]
     
 #    if mouse.events[bge.events.RIGHTMOUSE] == ACTIVE:
