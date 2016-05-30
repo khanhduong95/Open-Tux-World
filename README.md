@@ -6,7 +6,7 @@ Open Tux World is an open world, action-adventure game created with Blender.
 
 The game is played from a third-person view. The player controls the penguin in a world full of ice, snow and... other penguins.
 
-(*) Note: The game is currently in a very early stage, the planned content as in the description above is not yet completed 
+* Note: The game is currently in a very early stage, the planned content as in the description above is not yet completed 
 
 # Controls
 
