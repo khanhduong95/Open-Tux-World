@@ -1,12 +1,11 @@
-import bge
 import math
 
 def main(cont):
     own = cont.owner
     cam_dir = own.children["cam_dir2"]
-    rot = cam_dir["rotation"]    
-    
-    if own["collision"] == True:
+    rot = cam_dir["rotation"]
+
+    if own["collision"]:
         if rot < 10:
             cam_dir.applyRotation([0,0,-math.radians(0.4)],True)
             rot += 1
@@ -14,6 +13,5 @@ def main(cont):
         if rot > 0:
             cam_dir.applyRotation([0,0,math.radians(0.4)],True)
             rot -= 1
-    
-    cam_dir["rotation"] = rot     
-        
+
+    cam_dir["rotation"] = rot

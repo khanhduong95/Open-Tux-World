@@ -1,4 +1,3 @@
-import bge
 from random import randint
 
 def turn_left(own):
@@ -6,16 +5,16 @@ def turn_left(own):
 
 def turn_right(own):
     own.applyRotation([0,0,-0.01],True)
-    
+
 def move(own):
     if own["FORWARD"]:
-        own.setLinearVelocity([-10,0,0], True)    
+        own.setLinearVelocity([-10,0,0], True)
 
 def stop(own):
-    
-    own.setLinearVelocity([0.00000012,0,0]) 
-    own["moving"] = False 
-    own.setLinearVelocity([0,0,0]) 
+
+    own.setLinearVelocity([0.00000012,0,0])
+    own["moving"] = False
+    own.setLinearVelocity([0,0,0])
 
 def main(cont):
     own = cont.owner
@@ -23,14 +22,14 @@ def main(cont):
     brain = own["brain"]
     FORWARD = own["FORWARD"]
     RUN = own["RUN"]
-    own["FALL"] = own.children["AI_lower_sensor"]["collision"] == False
+    own["FALL"] = not own.children["AI_lower_sensor"]["collision"]
     moving = own["moving"]
 
-    if own["FALL"] == False:    
+    if not own["FALL"]:
         front_sensor = own.children["AI_front_sensor"]["collision"]
-        
+
         if brain == 0:
-            if front_sensor == False: 
+            if not front_sensor:
                 FORWARD = True
                 moving = True
                 if own["left_right"] != 0:
@@ -47,7 +46,7 @@ def main(cont):
                     turn_right(own)
 
         elif brain == 1:
-            if front_sensor == False: 
+            if not front_sensor:
                 FORWARD = True
                 moving = True
                 if own["left_right"] != 0:
@@ -62,7 +61,7 @@ def main(cont):
                     turn_left(own)
                 elif own["left_right"] == 2:
                     turn_right(own)
-        
-        own["FORWARD"] = FORWARD    
-        own["moving"] = moving    
+
+        own["FORWARD"] = FORWARD
+        own["moving"] = moving
         move(own)
