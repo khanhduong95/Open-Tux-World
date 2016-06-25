@@ -1,3 +1,4 @@
+from bge import logic
 from mathutils import Vector
 
 def main(cont):
@@ -14,3 +15,6 @@ def main(cont):
     own["v_x"] = v.x
     own["v_y"] = v.y
     own["v_z"] = v.z
+
+    if own["health"] <= 0:
+        own.state = logic.KX_STATE3
