@@ -1,67 +1,71 @@
-from random import randint
+def turn_left(own, RUN):
+    if RUN:
+        own.applyRotation([0,0,0.02],True)
+    else:
+        own.applyRotation([0,0,0.01],True)
 
-def turn_left(own):
-    own.applyRotation([0,0,0.01],True)
+def turn_right(own, RUN):
+    if RUN:
+        own.applyRotation([0,0,-0.02],True)
+    else:
+        own.applyRotation([0,0,-0.01],True)
 
-def turn_right(own):
-    own.applyRotation([0,0,-0.01],True)
+def aim_move(own, FORWARD, BACK, LEFT, RIGHT):
 
-def move(own):
-    if own["FORWARD"]:
+    if LEFT:
+        if FORWARD:
+            own.setLinearVelocity([-7,-7,0],True)
+
+        elif BACK:
+            own.setLinearVelocity([7,-7,0],True)
+
+        else:
+            own.setLinearVelocity([0,-10,0],True)
+
+    elif RIGHT:
+        if FORWARD:
+            own.setLinearVelocity([-7,7,0],True)
+
+        elif BACK:
+            own.setLinearVelocity([7,7,0],True)
+
+        else:
+            own.setLinearVelocity([0,10,0],True)
+
+    elif FORWARD:
+        own.setLinearVelocity([-10,0,0],True)
+
+    elif BACK:
+        own.setLinearVelocity([10,0,0],True)
+
+
+def move(own, RUN):
+    if RUN:
+        own.setLinearVelocity([-20,0,0], True)
+    else:
         own.setLinearVelocity([-10,0,0], True)
 
 def stop(own):
-
     own.setLinearVelocity([0.00000012,0,0])
     own["moving"] = False
     own.setLinearVelocity([0,0,0])
 
-def main(cont):
-    own = cont.owner
-
-    brain = own["brain"]
-    FORWARD = own["FORWARD"]
+def main(cont, own, FORWARD, BACK, LEFT, RIGHT, AIM):
     RUN = own["RUN"]
-    own["FALL"] = not own.children["AI_lower_sensor"]["collision"]
-    moving = own["moving"]
+    if AIM:
+        aim_move(own, FORWARD, BACK, LEFT, RIGHT)
+    else:
+        if FORWARD:
+            move(own, RUN)
+            if LEFT:
+                turn_left(own, RUN)
+            elif RIGHT:
+                turn_right(own, RUN)
+        else:
+            if own["moving"]:
+                stop(own)
+            elif LEFT:
+                turn_left(own, RUN)
+            elif RIGHT:
+                turn_right(own, RUN)
 
-    if not own["FALL"]:
-        front_sensor = own.children["AI_front_sensor"]["collision"]
-
-        if brain == 0:
-            if not front_sensor:
-                FORWARD = True
-                moving = True
-                if own["left_right"] != 0:
-                    own["left_right"] = 0
-            else:
-                FORWARD = False
-                if moving:
-                    stop(own)
-                if own["left_right"] == 0:
-                    own["left_right"] = randint(1,2)
-                elif own["left_right"] == 1:
-                    turn_left(own)
-                elif own["left_right"] == 2:
-                    turn_right(own)
-
-        elif brain == 1:
-            if not front_sensor:
-                FORWARD = True
-                moving = True
-                if own["left_right"] != 0:
-                    own["left_right"] = 0
-            else:
-                FORWARD = False
-                if moving:
-                    stop(own)
-                if own["left_right"] == 0:
-                    own["left_right"] = randint(1,2)
-                elif own["left_right"] == 1:
-                    turn_left(own)
-                elif own["left_right"] == 2:
-                    turn_right(own)
-
-        own["FORWARD"] = FORWARD
-        own["moving"] = moving
-        move(own)
