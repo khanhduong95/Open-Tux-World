@@ -10,6 +10,7 @@ The game is played from a third-person view. The player controls the penguin in 
 
 # Controls
 
+Mouse movement - look
 W - forward
 S - backward
 A - left

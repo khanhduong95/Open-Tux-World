@@ -20,11 +20,8 @@ def attacked_state(cont, own, brain, armature, front_sensor, attacker):
         AIM = False
 
     elif brain == 1:
-        find = cont.actuators["attacker_find"]
-        find.object = attacker
-        cont.activate(find)
-        cont.deactivate(find)
-        if front_sensor:
+        distance = own.getDistanceTo(attacker)
+        if front_sensor and distance > 2:
             AIM = False
             armature["FORWARD"] = FORWARD = False
             if own["left_right"] == 0:
@@ -33,14 +30,20 @@ def attacked_state(cont, own, brain, armature, front_sensor, attacker):
             armature["LEFT"] = LEFT = own["left_right"] == 1
             armature["RIGHT"] = RIGHT = own["left_right"] == 2
         else:
-            distance = own.getDistanceTo(attacker)
+            find = cont.actuators["attacker_find"]
+            find.object = attacker
+            cont.activate(find)
+            cont.deactivate(find)
             if distance < 5:
                 AIM = True
-                own["HIT"] = distance < 2
+                own["HIT"] = (distance < 2 and not 10 < armature["upper_frame"] <= 30)
+                FORWARD = not own["HIT"]
             else:
                 AIM = False
+                FORWARD = True
 
-            armature["FORWARD"] = FORWARD = own["moving"] = True
+            own["moving"] = True
+            armature["FORWARD"] = FORWARD
             if own["left_right"] != 0:
                 own["left_right"] = 0
             armature["LEFT"] = armature["RIGHT"] = LEFT = RIGHT = False

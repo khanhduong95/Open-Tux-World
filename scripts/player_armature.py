@@ -123,7 +123,7 @@ def move(own, FORWARD, BACK, LEFT, RIGHT, started_aim, current_frame):
 def action(cont):
     own = cont.owner
     upper_frame = own["upper_frame"]
-    hit = own.parent["HIT"]
+    hit = own["HIT"]
     hit_released = own.parent["hit_released"]
     if own.parent["death"]:
         own.state = logic.KX_STATE2
@@ -138,13 +138,16 @@ def action(cont):
 
     else:
         if own["AIM"]:
-            if hit:
-                own.playAction("upper_aim", 10, 20, layer=2, play_mode=logic.KX_ACTION_MODE_PLAY)
-                own["HIT"] = True
-            elif own["HIT"]:
-                own.playAction("upper_aim", 15, 20, layer=2, play_mode=logic.KX_ACTION_MODE_PLAY)
+            if own.parent["HIT"] or (hit and upper_frame < 30):
+                if upper_frame < 10:
+                    upper_frame = 10
+                own.playAction("upper_aim", upper_frame, upper_frame+1, layer=2, play_mode=logic.KX_ACTION_MODE_PLAY)
+                upper_frame += 1
+                hit = True
+            elif hit and upper_frame == 30:
+                upper_frame = 10
                 hit_released = True
-                own["HIT"] = False
+                hit = False
             else:
                 if upper_frame >= 10:
                     own.playAction("upper_aim", 10, 10, layer=1, play_mode=logic.KX_ACTION_MODE_PLAY)
@@ -154,13 +157,16 @@ def action(cont):
                     upper_frame += 1
 
         else:
-            if hit:
-                own.playAction("upper_aim", 10, 20, layer=2, play_mode=logic.KX_ACTION_MODE_PLAY)
-                own["HIT"] = True
-            elif own["HIT"]:
-                own.playAction("upper_aim", 15, 20, layer=2, play_mode=logic.KX_ACTION_MODE_PLAY)
+            if own.parent["HIT"] or (hit and upper_frame < 30):
+                if upper_frame < 10:
+                    upper_frame = 10
+                own.playAction("upper_aim", upper_frame, upper_frame+1, layer=2, play_mode=logic.KX_ACTION_MODE_PLAY)
+                upper_frame += 1
+                hit = True
+            elif hit and upper_frame == 30:
+                upper_frame = 10
                 hit_released = True
-                own["HIT"] = False
+                hit = False
             else:
                 if upper_frame <= 0:
                     own.playAction("upper_aim", 0, 0, layer=1, play_mode=logic.KX_ACTION_MODE_PLAY)
@@ -169,6 +175,7 @@ def action(cont):
                     own.playAction("upper_aim", upper_frame, upper_frame-1, layer=1, play_mode=logic.KX_ACTION_MODE_PLAY)
                     upper_frame -= 1
 
+    own["HIT"] = hit
     own.parent["hit_released"] = hit_released
     own["upper_frame"] = upper_frame
 

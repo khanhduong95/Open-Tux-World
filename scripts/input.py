@@ -24,4 +24,3 @@ def main(cont):
     AIM = armature["AIM"] = mouse.events[events.RIGHTMOUSE] == ACTIVE
     own["HIT"] = mouse.events[events.LEFTMOUSE] == JUST_ACTIVATED
     player_motion.main(cont, own, FORWARD, BACK, LEFT, RIGHT, JUMP, AIM, FALL)
-    print(id(own))
