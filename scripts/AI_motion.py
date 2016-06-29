@@ -52,6 +52,8 @@ def stop(own):
 
 def main(cont, own, FORWARD, BACK, LEFT, RIGHT, AIM):
     RUN = own["RUN"]
+    if own.worldOrientation[2] != [0.0,0.0,1.0]:
+        own.worldOrientation[2] = [0.0,0.0,1.0]
     if AIM:
         aim_move(own, FORWARD, BACK, LEFT, RIGHT)
     else:

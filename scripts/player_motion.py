@@ -92,8 +92,8 @@ def main(cont, own, FORWARD, BACK, LEFT, RIGHT, JUMP, AIM, FALL):
     cont.deactivate(cont.actuators["back_left_dir"])
     cont.deactivate(cont.actuators["back_right_dir"])
 
-    #obj_list = logic.getCurrentScene().objects
-    #obj_list["player_loc"].worldPosition = own.worldPosition
+    if own.worldOrientation[2] != [0.0,0.0,1.0]:
+         own.worldOrientation[2] = [0.0,0.0,1.0]
     sun_moon = logic.getCurrentScene().objects["sun_moon_holder_parent"]
     sun_moon.worldPosition.x = own.worldPosition.x
     sun_moon.worldPosition.y = own.worldPosition.y
@@ -101,9 +101,7 @@ def main(cont, own, FORWARD, BACK, LEFT, RIGHT, JUMP, AIM, FALL):
     if FALL:
         own.state = logic.KX_STATE3
     else:
-        own.worldOrientation[2] = [ 0.0, 0.0, 1.0 ]
         RUN_FAST = own.children["Armature"]["RUN_FAST"] = own["RUN"] and own["stamina"] >= 1
-
         if FORWARD or BACK or LEFT or RIGHT:
             own["moving"] = True
             if AIM:

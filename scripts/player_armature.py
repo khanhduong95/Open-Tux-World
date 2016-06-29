@@ -120,15 +120,66 @@ def move(own, FORWARD, BACK, LEFT, RIGHT, started_aim, current_frame):
     own["started_aim"] = started_aim
     own["current_frame"] = current_frame
 
-def action(cont):
-    own = cont.owner
-    upper_frame = own["upper_frame"]
-    hit = own["HIT"]
-    hit_released = own.parent["hit_released"]
-    if own.parent["death"]:
-        own.state = logic.KX_STATE2
+def action_armed(own, FALL, upper_frame, hit, hit_released):
 
-    elif own["FALL"]:
+    if FALL:
+        hit_released = False
+        if upper_frame <= 0:
+            own.playAction("upper_aim_armed", 0, 0, layer=1, play_mode=logic.KX_ACTION_MODE_PLAY)
+            upper_frame = 0
+        else:
+            own.playAction("upper_aim_armed", upper_frame, upper_frame-1, layer=1, play_mode=logic.KX_ACTION_MODE_PLAY)
+            upper_frame -= 1
+
+    else:
+        if own["AIM"]:
+            if own.parent["HIT"] or (hit and upper_frame < 30):
+                if upper_frame < 10:
+                    upper_frame = 10
+                else:
+                    hit_released = upper_frame == 24
+                own.playAction("upper_aim_armed", upper_frame, upper_frame+1, layer=2, play_mode=logic.KX_ACTION_MODE_PLAY)
+                upper_frame += 1
+                hit = True
+            elif hit and upper_frame == 30:
+                upper_frame = 10
+                hit = False
+            else:
+                if upper_frame >= 10:
+                    own.playAction("upper_aim_armed", 10, 10, layer=1, play_mode=logic.KX_ACTION_MODE_PLAY)
+                    upper_frame = 10
+                else:
+                    own.playAction("upper_aim_armed", upper_frame, upper_frame+1, layer=1, play_mode=logic.KX_ACTION_MODE_PLAY)
+                    upper_frame += 1
+
+        else:
+            if own.parent["HIT"] or (hit and upper_frame < 30):
+                if upper_frame < 10:
+                    upper_frame = 10
+                else:
+                    hit_released = upper_frame == 24
+                own.playAction("upper_aim_armed", upper_frame, upper_frame+1, layer=2, play_mode=logic.KX_ACTION_MODE_PLAY)
+                upper_frame += 1
+                hit = True
+            elif hit and upper_frame == 30:
+                upper_frame = 10
+                hit = False
+            else:
+                if upper_frame <= 0:
+                    own.playAction("upper_aim_armed", 0, 0, layer=1, play_mode=logic.KX_ACTION_MODE_PLAY)
+                    upper_frame = 0
+                else:
+                    own.playAction("upper_aim_armed", upper_frame, upper_frame-1, layer=1, play_mode=logic.KX_ACTION_MODE_PLAY)
+                    upper_frame -= 1
+
+    own["HIT"] = hit
+    own.parent["hit_released"] = hit_released
+    own["upper_frame"] = upper_frame
+
+def action_unarmed(own, FALL, upper_frame, hit, hit_released):
+
+    if FALL:
+        hit_released = False
         if upper_frame <= 0:
             own.playAction("upper_aim", 0, 0, layer=1, play_mode=logic.KX_ACTION_MODE_PLAY)
             upper_frame = 0
@@ -141,12 +192,13 @@ def action(cont):
             if own.parent["HIT"] or (hit and upper_frame < 30):
                 if upper_frame < 10:
                     upper_frame = 10
+                else:
+                    hit_released = upper_frame == 24
                 own.playAction("upper_aim", upper_frame, upper_frame+1, layer=2, play_mode=logic.KX_ACTION_MODE_PLAY)
                 upper_frame += 1
                 hit = True
             elif hit and upper_frame == 30:
                 upper_frame = 10
-                hit_released = True
                 hit = False
             else:
                 if upper_frame >= 10:
@@ -160,12 +212,13 @@ def action(cont):
             if own.parent["HIT"] or (hit and upper_frame < 30):
                 if upper_frame < 10:
                     upper_frame = 10
+                else:
+                    hit_released = upper_frame == 24
                 own.playAction("upper_aim", upper_frame, upper_frame+1, layer=2, play_mode=logic.KX_ACTION_MODE_PLAY)
                 upper_frame += 1
                 hit = True
             elif hit and upper_frame == 30:
                 upper_frame = 10
-                hit_released = True
                 hit = False
             else:
                 if upper_frame <= 0:
@@ -178,6 +231,18 @@ def action(cont):
     own["HIT"] = hit
     own.parent["hit_released"] = hit_released
     own["upper_frame"] = upper_frame
+
+def action(cont):
+    own = cont.owner
+    upper_frame = own["upper_frame"]
+    hit = own["HIT"]
+    hit_released = own.parent["hit_released"]
+    if own.parent["death"]:
+        own.state = logic.KX_STATE2
+    elif own.parent["weapon"] == 0:
+        action_unarmed(own, own["FALL"], own["upper_frame"], own["HIT"], own.parent["hit_released"])
+    else:
+        action_armed(own, own["FALL"], own["upper_frame"], own["HIT"], own.parent["hit_released"])
 
 def main(cont):
     own = cont.owner

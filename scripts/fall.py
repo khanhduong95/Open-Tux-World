@@ -6,7 +6,7 @@ def gravity(cont):
     v = own["v_z"]
     if v >= 0:
         v = 0
-    if v >= -100:
+    if v >= -150:
         v -= 0.5
     own.applyForce([0,0,50*v], False)
     own["v_z"] = v
@@ -40,6 +40,7 @@ def main(cont):
     own["v_z"] = v.z
 
     if own["health"] <= 0:
+        own["hit_released"] = False
         own["death"] = True
         own.state = logic.KX_STATE4
     elif max_dv < 1 and min_dv > -1 and (cont.sensors["Collision.001"].positive or not own["FALL"]):

@@ -32,5 +32,6 @@ def main(cont):
     own["v_z"] = v.z
 
     if own["health"] <= 0:
+        own["hit_released"] = False
         own["death"] = True
         own.state = logic.KX_STATE4
