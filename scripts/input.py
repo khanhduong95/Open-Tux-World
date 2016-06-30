@@ -1,5 +1,5 @@
 from bge import logic, events
-from scripts import player_motion
+from scripts import player_motion, switch_item
 
 keyboard = logic.keyboard
 mouse = logic.mouse
@@ -21,6 +21,9 @@ def main(cont):
     RIGHT = armature["RIGHT"] = keyboard.events[events.DKEY] == ACTIVE
     JUMP = keyboard.events[events.SPACEKEY] == ACTIVE
     own["RUN"] = keyboard.events[events.LEFTSHIFTKEY] == ACTIVE or keyboard.events[events.RIGHTSHIFTKEY] == ACTIVE
-    AIM = armature["AIM"] = mouse.events[events.RIGHTMOUSE] == ACTIVE
+    AIM = own.children["shoot_point_static"]["AIM"] = own.children["shoot_point"]["AIM"] = armature["AIM"] = mouse.events[events.RIGHTMOUSE] == ACTIVE
     own["HIT"] = mouse.events[events.LEFTMOUSE] == JUST_ACTIVATED
+    previous_item = keyboard.events[events.QKEY] == JUST_ACTIVATED or mouse.events[events.WHEELDOWNMOUSE] == JUST_ACTIVATED
+    next_item = keyboard.events[events.EKEY] == JUST_ACTIVATED or mouse.events[events.WHEELUPMOUSE] == JUST_ACTIVATED
+    switch_item.main(own, previous_item, next_item)
     player_motion.main(cont, own, FORWARD, BACK, LEFT, RIGHT, JUMP, AIM, FALL)
