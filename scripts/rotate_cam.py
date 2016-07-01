@@ -4,18 +4,18 @@ def aim(rot_aim, cam_dir, collision, aim):
     if aim:
         if collision:
             if rot_aim < 10:
-                cam_dir.applyRotation([0,0,math.radians(-0.2)],True)
+                cam_dir.applyRotation([0,0,math.radians(-0.25)],True)
                 rot_aim += 1
         else:
             if rot_aim > 0:
-                cam_dir.applyRotation([0,0,math.radians(0.2)],True)
+                cam_dir.applyRotation([0,0,math.radians(0.25)],True)
                 rot_aim -= 1
     else:
         if rot_aim < 5:
-            cam_dir.applyRotation([0,0,math.radians(-0.2)],True)
+            cam_dir.applyRotation([0,0,math.radians(-0.25)],True)
             rot_aim += 1
         elif rot_aim > 5:
-            cam_dir.applyRotation([0,0,math.radians(0.2)],True)
+            cam_dir.applyRotation([0,0,math.radians(0.25)],True)
             rot_aim -= 1
 
     cam_dir["rot_aim"] = rot_aim

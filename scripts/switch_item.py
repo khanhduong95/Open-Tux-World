@@ -27,11 +27,11 @@ def check_item_next(own, item_number):
             return 0
 
 def main(own, previous, next):
+    item = own["item"]
     if previous:
-        own["weapon"] = check_item_previous(own, own["weapon"]-1)
-        print(own["weapon"])
+        item = check_item_previous(own, item-1)
     elif next:
-        own["weapon"] = check_item_next(own, own["weapon"]+1)
-        print(own["weapon"])
+        item = check_item_next(own, item+1)
     else:
-        own["weapon"] = check_item_previous(own, own["weapon"])
+        item = check_item_previous(own, item)
+    own["item"] = item

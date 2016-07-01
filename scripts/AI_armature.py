@@ -209,7 +209,7 @@ def action(cont):
     hit = own["HIT"]
     if own.parent["death"]:
         own.state = logic.KX_STATE2
-    elif own.parent["weapon"] == 0:
+    elif own.parent["item"] == 0:
         action_unarmed(own, own["FALL"], own["upper_frame"], own["HIT"], own.parent["hit_released"])
     else:
         action_armed(own, own["FALL"], own["upper_frame"], own["HIT"], own.parent["hit_released"])

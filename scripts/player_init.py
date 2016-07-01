@@ -2,9 +2,8 @@ from bge import logic
 
 def main(cont):
     own = cont.owner
-    own['ID'] = id(own)#ID
     own['stamina'] = own['max_stamina']
-    own["weapon"] = 2
+    own["item"] = 2
     own["snow"] = 20
     own["ice"] = 20
     scene = logic.getCurrentScene()

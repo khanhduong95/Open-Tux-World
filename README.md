@@ -19,6 +19,7 @@ Space - jump
 Left Mouse - hit/shoot
 Right Mouse - aim
 Shift + W/A/S/D - run
+Mouse Wheel Up/Down (or E/Q) - switch items
 R (when dead) - respawn
 
 Esc - exit game

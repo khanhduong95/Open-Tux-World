@@ -1,73 +1,102 @@
 from bge import logic
-from scripts import AI_motion
+from scripts import AI_motion, switch_item
 from random import randint
 
 def attacked_state(cont, own, brain, armature, front_sensor, attacker):
+    left_right = own["left_right"]
+
     if brain == 0:
         if front_sensor:
-            armature["FORWARD"] = FORWARD = False
-            if own["left_right"] == 0:
-                own["left_right"] = randint(1,2)
+            FORWARD = False
+            if left_right == 0:
+                left_right = randint(1,2)
 
-            armature["LEFT"] = LEFT = own["left_right"] == 1
-            armature["RIGHT"] = RIGHT = own["left_right"] == 2
+            LEFT = left_right == 1
+            RIGHT = left_right == 2
         else:
-            armature["FORWARD"] = FORWARD = own["moving"] = True
-            if own["left_right"] != 0:
-                own["left_right"] = 0
+            if left_right == 0:
+                flee = cont.actuators["flee"]
+                flee.object = attacker
+                cont.activate(flee)
+                cont.deactivate(flee)
+                LEFT = RIGHT = False
+            else:
+                print(left_right)
+                LEFT = left_right == 1
+                RIGHT = left_right == 2
+                left_right = 0
 
-            armature["LEFT"] = armature["RIGHT"] = LEFT = RIGHT = False
+            FORWARD = own["moving"] = True
         AIM = False
+        BACK = False
 
     elif brain == 1:
         distance = own.getDistanceTo(attacker)
+        own["item"] = switch_item.check_item_previous(own, 2)
         if front_sensor and distance > 2:
             AIM = False
-            armature["FORWARD"] = FORWARD = False
-            if own["left_right"] == 0:
-                own["left_right"] = randint(1,2)
+            FORWARD = False
+            if left_right == 0:
+                left_right = randint(1,2)
 
-            armature["LEFT"] = LEFT = own["left_right"] == 1
-            armature["RIGHT"] = RIGHT = own["left_right"] == 2
+            LEFT = left_right == 1
+            RIGHT = left_right == 2
         else:
             find = cont.actuators["attacker_find"]
             find.object = attacker
             cont.activate(find)
             cont.deactivate(find)
-            if distance < 5:
+            if distance < 5 or (distance < 15 and own["item"] != 0):
                 AIM = True
-                own["HIT"] = (distance < 2 and not 10 < armature["upper_frame"] <= 30)
+                if own["item"] == 0:
+                    own["HIT"] = (distance < 2 and not 10 < armature["upper_frame"] <= 30)
+                else:
+                    own["HIT"] = (distance < 15 and not 10 < armature["upper_frame"] <= 30)
                 FORWARD = not own["HIT"]
             else:
                 AIM = False
                 FORWARD = True
-
             own["moving"] = True
-            armature["FORWARD"] = FORWARD
-            if own["left_right"] != 0:
-                own["left_right"] = 0
-            armature["LEFT"] = armature["RIGHT"] = LEFT = RIGHT = False
 
-    armature["BACK"] = BACK = not FORWARD
-    armature["AIM"] = AIM
+            if left_right != 0:
+                left_right = 0
+            LEFT = RIGHT = False
+        BACK = False
+
+    own["left_right"] = left_right
+    armature["FORWARD"] = FORWARD
+    armature["BACK"] = BACK
+    armature["LEFT"] = LEFT
+    armature["RIGHT"] = RIGHT
+    own.children["AI_shoot_point"]["AIM"] = armature["AIM"] = AIM
     AI_motion.main(cont, own, FORWARD, BACK, LEFT, RIGHT, AIM)
 
 def normal_state(cont, own, brain, armature, front_sensor):
+    left_right = own["left_right"]
+
+    if own["item"] != 0:
+        own["item"] = 0
+
     if front_sensor:
-        armature["FORWARD"] = FORWARD = False
-        if own["left_right"] == 0:
-            own["left_right"] = randint(1,2)
+        FORWARD = False
+        if left_right == 0:
+            left_right = randint(1,2)
 
-        armature["LEFT"] = LEFT = own["left_right"] == 1
-        armature["RIGHT"] = RIGHT = own["left_right"] == 2
+        LEFT = left_right == 1
+        RIGHT = left_right == 2
     else:
-        armature["FORWARD"] = FORWARD = own["moving"] = True
-        if own["left_right"] != 0:
-            own["left_right"] = 0
+        FORWARD = own["moving"] = True
+        if left_right != 0:
+            left_right = 0
 
-        armature["LEFT"] = armature["RIGHT"] = LEFT = RIGHT = False
+        LEFT = RIGHT = False
 
-    armature["BACK"] = BACK = not FORWARD
+    own["left_right"] = left_right
+    armature["FORWARD"] = FORWARD
+    armature["BACK"] = BACK = False
+    armature["LEFT"] = LEFT
+    armature["RIGHT"] = RIGHT
+    armature["BACK"] = BACK
     AI_motion.main(cont, own, FORWARD, BACK, LEFT, RIGHT, False)
 
 def main(cont):
