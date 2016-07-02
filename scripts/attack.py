@@ -41,9 +41,12 @@ def target_aim(cont):
 def AI_target_aim(cont):
     own = cont.owner
     if not own.parent["normal"]:
-        target = logic.getCurrentScene().objects.from_id(own.parent["attacker_ID"])
-        own.alignAxisToVect(own.worldPosition - target.worldPosition,0,1.0) # point X axis at target
-        own.alignAxisToVect(own.parent.worldOrientation.col[1],1,1.0) # use parent Y as up axis
+        try:
+            target = logic.getCurrentScene().objects.from_id(own.parent["attacker_ID"])
+            own.alignAxisToVect(own.worldPosition - target.worldPosition,0,1.0) # point X axis at target
+            own.alignAxisToVect(own.parent.worldOrientation.col[1],1,1.0) # use parent Y as up axis
+        except:
+            own.parent["normal"] = True
 
 def shoot(cont):
     own = cont.owner

@@ -25,8 +25,8 @@ def main(cont):
     if brain == 1:
         snow_ice = randint(0,2)
         if snow_ice == 1:
-            own["snow"] = 20
+            own["snow"] = 30
         elif snow_ice == 2:
-            own["ice"] = 20
+            own["ice"] = 30
 
     own.state = logic.KX_STATE2

@@ -39,7 +39,6 @@ def attacked_state(cont, own, brain, armature, front_sensor, attacker):
                 cont.deactivate(flee)
                 LEFT = RIGHT = False
             else:
-                print(left_right)
                 LEFT = left_right == 1
                 RIGHT = left_right == 2
                 left_right = 0
