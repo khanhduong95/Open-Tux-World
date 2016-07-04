@@ -28,5 +28,6 @@ def main(cont):
             own["snow"] = 30
         elif snow_ice == 2:
             own["ice"] = 30
+    own["fish"] = randint(10,20)
 
     own.state = logic.KX_STATE2

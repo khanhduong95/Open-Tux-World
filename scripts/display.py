@@ -30,10 +30,13 @@ def amount(cont):
         cube = get_scene("Scene").objects.from_id(logic.globalDict.get("player_id"))
         snow = cube["snow"]
         ice = cube["ice"]
+        fish = cube["fish"]
         if own.parent["item"] == 1:
             own.text = str(snow)
         elif own.parent["item"] == 2:
             own.text = str(ice)
+        elif own.parent["item"] == 3:
+            own.text = str(fish)
         else:
             own.text = ""
     except:
@@ -50,6 +53,8 @@ def item(cont):
                 own.children["snow_ball"].endObject()
             elif item == 2:
                 own.children["ice_cube"].endObject()
+            elif item == 3:
+                own.children["fish"].endObject()
             if new == 1:
                 snow = scene.addObject("snow_ball", own, 0)
                 snow.setParent(own, 0, 1)
@@ -58,6 +63,12 @@ def item(cont):
                 ice = scene.addObject("ice_cube", own, 0)
                 ice.setParent(own, 0, 1)
                 ice.worldScale = [0.19,0.19,0.19]
+            elif new == 3:
+                fish = scene.addObject("fish", own, 0)
+                fish.setParent(own, 0, 1)
+                #fish.alignAxisToVect([0.0,1.0,0.0],2,1.0)
+                fish.alignAxisToVect([0.0,0.0,-1.0],1,1.0)
+                fish.worldScale = [0.143*1.5,0.043*1.5,0.065*1.5]
             own["item"] = new
     except:
         return

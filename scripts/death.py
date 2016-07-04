@@ -22,6 +22,9 @@ from scripts import collect
 def main(cont):
     own = cont.owner
     own["HIT"] = own["hit_released"] = own["RUN"] = False
+    if own["fish"] > 0:
+        collect.generate(cont, own, 3, own["fish"], logic.getCurrentScene())
+        own["fish"] = 0
     if own["ice"] > 0:
         collect.generate(cont, own, 2, own["ice"], logic.getCurrentScene())
         own["ice"] = 0

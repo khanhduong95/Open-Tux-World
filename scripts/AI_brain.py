@@ -17,7 +17,7 @@
 #    along with Open Tux World.  If not, see <http://www.gnu.org/licenses/>.
 #
 from bge import logic
-from scripts import AI_motion, switch_item
+from scripts import AI_motion, switch_item, eat
 from random import randint
 
 def attacked_state(cont, own, brain, armature, front_sensor, attacker):
@@ -121,6 +121,7 @@ def main(cont):
     armature = own.children["AI_Armature"]
     FALL = own["FALL"] = not own.children["AI_lower_sensor"]["collision"]
     brain = own["brain"]
+    eat.main(own, own["health"] <= 50, own["item"], own["fish"], own["health"], 60)
     if FALL:
         own.state = logic.KX_STATE3
     else:

@@ -22,9 +22,10 @@ def main(cont):
     own = cont.owner
     logic.globalDict["player_id"] = id(own)
     own['stamina'] = own['max_stamina']
-    own["item"] = 2
-    own["snow"] = 30
-    own["ice"] = 30
+    own["item"] = 0
+    own["snow"] = 20
+    own["ice"] = 20
+    own["fish"] = 20
     scene = logic.getCurrentScene()
     scene.active_camera = own.children["camera_track"].children["camera_track2"].children["cam_dir2"].children["cam_dir"].children["cam_holder"].children["Camera"]
     own.state = logic.KX_STATE2

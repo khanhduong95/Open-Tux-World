@@ -51,24 +51,25 @@ def AI_target_aim(cont):
 def shoot(cont):
     own = cont.owner
     ray = cont.sensors["shoot_ray"]
-
+    parent = own.parent
+    item = parent["item"]
     if own["AIM"]:
-        if ray.positive and own.parent["item"] != 0 and id(ray.hitObject) != id(own.parent): #alert target
+        if ray.positive and item != 0 and item != 3 and id(ray.hitObject) != id(parent): #alert target
             angle = ray.hitObject.worldOrientation.to_euler().z - own.worldOrientation.to_euler().z
             if math.radians(-180) <= angle < math.radians(-90) or math.radians(180) >= angle > math.radians(90): #check if target looking
                 ray.hitObject["normal"] = False
-                ray.hitObject["attacker_ID"] = id(own.parent)
+                ray.hitObject["attacker_ID"] = id(parent)
 
-    if own.parent["hit_released"]: #shoot
+    if parent["hit_released"]: #shoot
         scene = logic.getCurrentScene()
-        if own.parent["item"] == 1:
+        if item == 1:
             shoot_setup(own, scene, "snow_ball", "snow", 40000)
-        elif own.parent["item"] == 2:
+        elif item == 2:
             shoot_setup(own, scene, "ice_cube", "ice", 60000)
 
 def hit(cont):
     own = cont.owner
-    if own.parent["item"] == 0:
+    if own.parent["item"] == 0 or own.parent["item"] == 3:
         hit = logic.getCurrentScene().addObject("hit",own,3)
         hit["owner_ID"] = id(own.parent)
         hit.setLinearVelocity([-45,0,0], True)

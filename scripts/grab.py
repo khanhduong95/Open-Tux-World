@@ -24,6 +24,8 @@ def change_item(own, new, current):
         own.children["snow_ball"].endObject()
     elif current == 2:
         own.children["ice_cube"].endObject()
+    elif current == 3:
+        own.children["fish"].endObject()
     if new == 1:
         snow = scene.addObject("snow_ball",own,0)
         snow.setParent(own,0,1)
@@ -32,6 +34,10 @@ def change_item(own, new, current):
         ice = scene.addObject("ice_cube",own,0)
         ice.setParent(own,0,1)
         ice.worldScale = [0.197,0.197,0.197]
+    elif new == 3:
+        fish = scene.addObject("fish",own,0)
+        fish.setParent(own,0,1)
+        fish.worldScale = [0.143*2,0.043*2,0.065*2]
 
 def main(cont):
     own = cont.owner
@@ -43,5 +49,3 @@ def main(cont):
     elif new != current:
         change_item(own, new, current)
     own["current"] = new
-
-

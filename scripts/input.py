@@ -17,7 +17,7 @@
 #    along with Open Tux World.  If not, see <http://www.gnu.org/licenses/>.
 #
 from bge import logic, events
-from scripts import player_motion, switch_item
+from scripts import player_motion, switch_item, eat
 
 keyboard = logic.keyboard
 mouse = logic.mouse
@@ -42,6 +42,7 @@ def main(cont):
     AIM = own.children["shoot_point"]["AIM"] = armature["AIM"] = mouse.events[events.RIGHTMOUSE] == ACTIVE
     own["HIT"] = mouse.events[events.LEFTMOUSE] == JUST_ACTIVATED
     previous_item = keyboard.events[events.QKEY] == JUST_ACTIVATED or mouse.events[events.WHEELDOWNMOUSE] == JUST_ACTIVATED
-    next_item = keyboard.events[events.EKEY] == JUST_ACTIVATED or mouse.events[events.WHEELUPMOUSE] == JUST_ACTIVATED
+    next_item = mouse.events[events.WHEELUPMOUSE] == JUST_ACTIVATED
     switch_item.main(own, previous_item, next_item)
+    eat.main(own, keyboard.events[events.EKEY] == JUST_ACTIVATED, own["item"], own["fish"], own["health"], 90)
     player_motion.main(cont, own, FORWARD, BACK, LEFT, RIGHT, JUMP, AIM, FALL)

@@ -23,9 +23,14 @@ def create_image(own, item, scene): #create an image of each collectible item
         string = "snow_ball"
     elif item == 2:
         string = "ice_cube"
+    elif item == 3:
+        string = "fish"
     image = scene.addObject(string,own,0)
     image.setParent(own,0,1)
-    image.worldScale = [0.197,0.197,0.197]
+    if item == 3:
+        image.worldScale = [0.143*2,0.043*2,0.065*2]
+    else:
+        image.worldScale = [0.197,0.197,0.197]
 
 def generate(cont, own, item, amount, scene): #generate collectible items
     new = scene.addObject("collect_item",own,0)
@@ -52,4 +57,10 @@ def main(cont):
                 target["ice"] = 30
             else:
                 target["ice"] += amount
+            own.endObject()
+        elif item == 3 and target["fish"] < 30:
+            if target["fish"] + amount >= 30:
+                target["fish"] = 30
+            else:
+                target["fish"] += amount
             own.endObject()
