@@ -22,6 +22,7 @@ from random import randint
 
 def attacked_state(cont, own, brain, armature, front_sensor, attacker):
     left_right = own["left_right"]
+    vec = own.worldPosition - attacker.worldPosition
 
     if brain == 0:
         if front_sensor:
@@ -33,10 +34,7 @@ def attacked_state(cont, own, brain, armature, front_sensor, attacker):
             RIGHT = left_right == 2
         else:
             if left_right == 0:
-                flee = cont.actuators["flee"]
-                flee.object = attacker
-                cont.activate(flee)
-                cont.deactivate(flee)
+                own.alignAxisToVect([-vec.x,-vec.y,0],0,0.5)#point away from attacker
                 LEFT = RIGHT = False
             else:
                 LEFT = left_right == 1
@@ -47,7 +45,7 @@ def attacked_state(cont, own, brain, armature, front_sensor, attacker):
         AIM = False
         BACK = False
 
-    elif brain == 1:
+    else:
         distance = own.getDistanceTo(attacker)
         own["item"] = switch_item.check_item_previous(own, 2)
         if front_sensor and distance > 2:
@@ -59,21 +57,20 @@ def attacked_state(cont, own, brain, armature, front_sensor, attacker):
             LEFT = left_right == 1
             RIGHT = left_right == 2
         else:
-            find = cont.actuators["attacker_find"]
-            find.object = attacker
-            cont.activate(find)
-            cont.deactivate(find)
+            own.alignAxisToVect([vec.x,vec.y,0],0,0.5)#point to attacker
             if distance < 5 or (distance < 15 and own["item"] != 0):
                 AIM = True
                 if own["item"] == 0:
                     own["HIT"] = (distance < 2 and not 10 < armature["upper_frame"] <= 30)
                 else:
                     own["HIT"] = (distance < 15 and not 10 < armature["upper_frame"] <= 30)
-                FORWARD = not own["HIT"]
+                if own["HIT"]:
+                    FORWARD = False
+                else:
+                    FORWARD = own["moving"] = True
             else:
                 AIM = False
-                FORWARD = True
-            own["moving"] = True
+                FORWARD = own["moving"] = True
 
             if left_right != 0:
                 left_right = 0
@@ -113,7 +110,6 @@ def normal_state(cont, own, brain, armature, front_sensor):
     armature["BACK"] = BACK = False
     armature["LEFT"] = LEFT
     armature["RIGHT"] = RIGHT
-    armature["BACK"] = BACK
     AI_motion.main(cont, own, FORWARD, BACK, LEFT, RIGHT, False)
 
 def main(cont):
@@ -121,12 +117,14 @@ def main(cont):
     armature = own.children["AI_Armature"]
     FALL = own["FALL"] = not own.children["AI_lower_sensor"]["collision"]
     brain = own["brain"]
-    eat.main(own, own["health"] <= 50, own["item"], own["fish"], own["health"], 60)
     if FALL:
         own.state = logic.KX_STATE3
     else:
         front_sensor = own.children["AI_front_sensor"]["collision"]
         if own["normal"]:
+            if own["brain"] == 2:
+                own["attacker_ID"] = logic.globalDict.get("random_id") #find someone to attack
+                own["normal"] = False
             armature["AIM"] = own["RUN"] = False
             normal_state(cont, own, brain, armature, front_sensor)
         else:

@@ -104,9 +104,8 @@ def aim_move(own, FORWARD, BACK, LEFT, RIGHT, started_aim, current_frame):
     own["started_aim"] = started_aim
     own["current_frame"] = current_frame
 
-
-def move(own, FORWARD, BACK, LEFT, RIGHT, started_aim, current_frame):
-    if FORWARD or BACK or LEFT or RIGHT:
+def move(own, FORWARD, started_aim, current_frame):
+    if FORWARD:
         if own["RUN"]:
             if current_frame <= 0:
                 current_frame = 0
@@ -249,4 +248,4 @@ def main(cont):
         if own["AIM"]:
             aim_move(own, FORWARD, BACK, LEFT, RIGHT, started_aim, current_frame)
         else:
-            move(own, FORWARD, BACK, LEFT, RIGHT, started_aim, current_frame)
+            move(own, FORWARD, started_aim, current_frame)

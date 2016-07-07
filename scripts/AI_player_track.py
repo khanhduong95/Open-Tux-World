@@ -21,8 +21,13 @@ from bge import logic
 def main(cont):
     own = cont.owner
     try:
-        distance = own.getDistanceTo(logic.getCurrentScene().objects["player_loc"])
-        if distance >= 250:
-            own.endObject()
+        dist_loc = own.getDistanceTo(logic.getCurrentScene().objects["player_loc"]) #distance to player_loc
+        dist_cam = own.getDistanceTo(logic.getCurrentScene().objects["cam_pos"]) #distance to camera
+        if own["death"]:
+            if dist_loc >= 240 or (dist_loc > 40 and dist_loc - dist_cam > 0):
+                own.endObject()
+        else:
+            if dist_loc >= 270 or (dist_loc > 100 and dist_loc - dist_cam > 0):
+                own.endObject()
     except:
-        own.endObject()
+        pass#own.endObject()

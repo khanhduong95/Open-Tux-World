@@ -64,9 +64,9 @@ def move(own, RUN):
         own.setLinearVelocity([-10,0,0], True)
 
 def stop(own):
-    own.setLinearVelocity([0.00000012,0,0])
+    own.setLinearVelocity([0.00000012,0,0], True)
     own["moving"] = False
-    own.setLinearVelocity([0,0,0])
+    own.setLinearVelocity([0,0,0], True)
 
 def main(cont, own, FORWARD, BACK, LEFT, RIGHT, AIM):
     RUN = own["RUN"]
