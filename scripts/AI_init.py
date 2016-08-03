@@ -23,23 +23,14 @@ def main(cont):
     own = cont.owner
     brain = own["brain"] = randint(0,2)
     if brain != 0:
-        if brain != 2:
-            chosen_one = randint(0,1) #chosen to be target of active attackers
-            if chosen_one == 1:
-                logic.globalDict["random_id"] = id(own)
-#            else:
-#                logic.globalDict["random_id"] = 0
-        snow_ice = randint(0,2)
+        snow_ice = randint(0,3)
         if snow_ice == 1:
             own["snow"] = 30
         elif snow_ice == 2:
             own["ice"] = 30
-    else:
-        chosen_one = randint(0,1) #chosen to be target of active attackers
-        if chosen_one == 1:
-            logic.globalDict["random_id"] = id(own)
-#        else:
-#            logic.globalDict["random_id"] = 0
+        elif snow_ice == 3:
+            own["snow"] = 15
+            own["ice"] = 15
 
     own["fish"] = randint(0,10)
     own.state = logic.KX_STATE2

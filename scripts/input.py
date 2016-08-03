@@ -24,6 +24,16 @@ mouse = logic.mouse
 JUST_ACTIVATED = logic.KX_INPUT_JUST_ACTIVATED
 ACTIVE = logic.KX_INPUT_ACTIVE
 
+def cam(cont):
+    own = cont.owner
+    if keyboard.events[events.PKEY] == JUST_ACTIVATED:
+        if own["pause"]:
+            cont.activate(cont.actuators["resume"])
+            own["pause"] = False
+        else:
+            cont.activate(cont.actuators["pause"])
+            own["pause"] = True
+
 def rigid_main(cont):
     if keyboard.events[events.RKEY] == JUST_ACTIVATED:
         cont.activate(cont.actuators["Message"])

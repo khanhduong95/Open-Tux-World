@@ -18,7 +18,7 @@
 #
 from bge import logic
 from scripts import AI_motion, switch_item, eat
-from random import randint
+from random import randint, choice
 
 def attacked_state(cont, own, brain, armature, front_sensor, attacker):
     left_right = own["left_right"]
@@ -123,8 +123,13 @@ def main(cont):
         front_sensor = own.children["AI_front_sensor"]["collision"]
         if own["normal"]:
             if own["brain"] == 2:
-                own["attacker_ID"] = logic.globalDict.get("random_id") #find someone to attack
-                own["normal"] = False
+                AI_list = []
+                for obj in logic.getCurrentScene().objects:
+                    if "AI" in obj and id(obj) != id(own) and obj not in AI_list:
+                        AI_list.append(id(obj))
+                if AI_list:
+                    own["attacker_ID"] = choice(AI_list) #find someone to attack
+                    own["normal"] = False
             armature["AIM"] = own["RUN"] = False
             normal_state(cont, own, brain, armature, front_sensor)
         else:

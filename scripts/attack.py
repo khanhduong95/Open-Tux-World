@@ -26,7 +26,7 @@ def shoot_setup(own, scene, name, name_inventory, mass):
     shoot.worldScale = [0.197,0.197,0.197]
     shoot["owner_ID"] = id(own.parent)
     shoot.mass = mass
-    shoot.setLinearVelocity([-180,0,0], True)
+    shoot.setLinearVelocity([-90,0,0], True)
     own.parent[name_inventory] -= 1
 
 def target_aim(cont):
@@ -63,9 +63,9 @@ def shoot(cont):
     if parent["hit_released"]: #shoot
         scene = logic.getCurrentScene()
         if item == 1:
-            shoot_setup(own, scene, "snow_ball", "snow", 40000)
+            shoot_setup(own, scene, "snow_ball", "snow", 2000)
         elif item == 2:
-            shoot_setup(own, scene, "ice_cube", "ice", 60000)
+            shoot_setup(own, scene, "ice_cube", "ice", 3000)
 
 def hit(cont):
     own = cont.owner

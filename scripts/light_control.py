@@ -41,9 +41,9 @@ def main(cont):
         moon_sky.energy = 0.0
         sun_sky.energy = 1.0
     else:
-        moon.energy = 0.05
+        moon.energy = 0.025
         sun.energy = 0.0
-        moon_sky.energy = 0.05
+        moon_sky.energy = 0.025
         sun_sky.energy = 0.0
 
     own["hour"] = hour
