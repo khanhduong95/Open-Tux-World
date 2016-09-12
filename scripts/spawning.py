@@ -34,46 +34,15 @@ def AI(cont):
         return
 
     if 50 < dist_cube < 100 and dist_cube < dist_for_dir:
-        if not own["spawn"] and AI_count <= 5:
-            scene.addObject("AI_penguin",own,0)
-            own["spawn"] = True
+        if not own["spawn_AI"] and AI_count <= 5:
+            new_AI = scene.addObject("AI_penguin",own,0)
+            own["spawn_AI"] = True
     elif 100 <= dist_cube < 200:
-        if not own["spawn"] and AI_count < 2:
+        if not own["spawn_AI"] and AI_count < 2:
             scene.addObject("AI_penguin",own,0)
-            own["spawn"] = True
+            own["spawn_AI"] = True
     else:
-        own["spawn"] = False
-
-def terrain(cont):
-    own = cont.owner
-    scene = logic.getCurrentScene()
-    try:
-        player = scene.objects["player_loc"]
-    except:
-        return
-
-    if own.getDistanceTo(player) >= 500:
-        if own["spawn_physics"]:
-            own.children[own.name+"_physics"].endObject()
-            own["spawn_physics"] = False
-    elif not own["spawn_physics"]:
-        physics = scene.addObject(own.name+"_physics",own,0)
-        physics.setParent(own,1,0)
-        physics_child = scene.addObject(own.name+"_physics",physics,0)
-        physics_child.worldPosition.z -= 0.03
-        physics_child.setParent(physics,0,0)
-        own["spawn_physics"] = True
-
-    dist = own.worldPosition - player.worldPosition
-    if (dist.x >= 1000 and dist.y >= 1000) or (dist.x <= -1000 and dist.y <= -1000):
-        if own["spawn_image"]:
-            own.children[own.name+"_image"].endObject()
-            own["spawn_image"] = False
-            own.state = logic.KX_STATE1
-    elif not own["spawn_image"]:
-        image = scene.addObject(own.name+"_image",own,0)
-        image.setParent(own,1,0)
-        own["spawn_image"] = True
+        own["spawn_AI"] = False
 
 def player_terrain(cont):
     own = cont.owner
@@ -81,5 +50,28 @@ def player_terrain(cont):
     for obj in scene.objects:
         if "terrain_spawner" in obj:
             dist = own.worldPosition - obj.worldPosition
-            if (dist.x < 1000 and dist.x > -1000) or (dist.y < 1000 and dist.y > -1000):
-                obj.state = logic.KX_STATE2
+            if -1000 < dist.x < 1000 and -1000 < dist.y < 1000:
+                if not obj["spawn_image"]:
+                    image = scene.addObject(obj.name+"_image",obj,0)
+                    image.setParent(obj,1,0)
+                    obj["spawn_image"] = True
+                if obj.getDistanceTo(own) >= 500:
+                    if obj["spawn_physics"]:
+                        obj.children[obj.name+"_physics"].endObject()
+                        obj["spawn_physics"] = False
+                elif not obj["spawn_physics"]:
+                    physics = scene.addObject(obj.name+"_physics",obj,0)
+                    physics.setParent(obj,1,0)
+                    if "house" in obj:
+                        physics_child = scene.addObject(obj.name+"_physics.001",physics,0)
+
+                    else:
+                        physics_child = scene.addObject(obj.name+"_physics",physics,0)
+                        physics_child.worldPosition.z -= 0.03
+
+                    physics_child.setParent(physics,0,0)
+                    obj["spawn_physics"] = True
+
+            elif obj["spawn_image"]:
+                obj.children[obj.name+"_image"].endObject()
+                obj["spawn_image"] = False
