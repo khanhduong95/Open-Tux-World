@@ -22,10 +22,15 @@ def AI(cont):
     own = cont.owner
     scene = logic.getCurrentScene()
     AI_list = []
+    AI_close_list = []
     for obj in scene.objects:
-        if "AI" in obj and own.getDistanceTo(obj) < 100 and obj not in AI_list:
+        distance = own.getDistanceTo(obj)
+        if "AI" in obj and distance < 100 and obj not in AI_list:
             AI_list.append(obj)
+            if distance < 20:
+                AI_close_list.append(obj)
     AI_count = len(AI_list)
+    AI_close_count = len(AI_close_list)
     try:
         cube = scene.objects["Cube"]
         dist_cube = own.getDistanceTo(cube)
@@ -34,11 +39,11 @@ def AI(cont):
         return
 
     if 50 < dist_cube < 100 and dist_cube < dist_for_dir:
-        if not own["spawn_AI"] and AI_count <= 5:
+        if not own["spawn_AI"] and AI_count <= 5 and AI_close_count < 1:
             new_AI = scene.addObject("AI_penguin",own,0)
             own["spawn_AI"] = True
     elif 100 <= dist_cube < 200:
-        if not own["spawn_AI"] and AI_count < 2:
+        if not own["spawn_AI"] and AI_count < 2 and AI_close_count < 1:
             scene.addObject("AI_penguin",own,0)
             own["spawn_AI"] = True
     else:
