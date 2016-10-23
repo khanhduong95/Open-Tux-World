@@ -61,9 +61,9 @@ def attacked_state(cont, own, brain, armature, front_sensor, attacker):
             if distance < 5 or (distance < 15 and own["item"] != 0):
                 AIM = True
                 if own["item"] == 0:
-                    own["HIT"] = (distance < 2 and not 10 < armature["upper_frame"] <= 30)
+                    own["HIT"] = (distance < 2 and not 10 < armature["upper_current_frame"] <= 30)
                 else:
-                    own["HIT"] = (distance < 15 and not 10 < armature["upper_frame"] <= 30)
+                    own["HIT"] = (distance < 15 and not 10 < armature["upper_current_frame"] <= 30)
                 if own["HIT"]:
                     FORWARD = False
                 else:
