@@ -18,47 +18,47 @@
 #
 from bge import logic
 
-def aim_move(own, FORWARD, BACK, LEFT, RIGHT):
+def aim_move(own, forward, back, left, right):
 
-    if LEFT:
-        if FORWARD:
+    if left:
+        if forward:
             own.setLinearVelocity([-7,-7,0],True)
 
-        elif BACK:
+        elif back:
             own.setLinearVelocity([7,-7,0],True)
 
         else:
             own.setLinearVelocity([0,-10,0],True)
 
-    elif RIGHT:
-        if FORWARD:
+    elif right:
+        if forward:
             own.setLinearVelocity([-7,7,0],True)
 
-        elif BACK:
+        elif back:
             own.setLinearVelocity([7,7,0],True)
 
         else:
             own.setLinearVelocity([0,10,0],True)
 
-    elif FORWARD:
+    elif forward:
         own.setLinearVelocity([-10,0,0],True)
 
-    elif BACK:
+    elif back:
         own.setLinearVelocity([10,0,0],True)
 
-def normal_move(own, RUN_FAST, RUN, JUMP):
-    if RUN_FAST:
-        if JUMP:
+def normal_move(own, run_fast, run, jump):
+    if run_fast:
+        if jump:
             own.setLinearVelocity([-30,0,6],True)
         else:
             own.setLinearVelocity([-30,0,0],True)
-    elif RUN:
-        if JUMP:
+    elif run:
+        if jump:
             own.setLinearVelocity([-20,0,6],True)
         else:
             own.setLinearVelocity([-20,0,0],True)
     else:
-        if JUMP:
+        if jump:
             own.setLinearVelocity([-10,0,6],True)
         else:
             own.setLinearVelocity([-10,0,0],True)
@@ -68,38 +68,38 @@ def stop(own):
     own["moving"] = False
     own.setLinearVelocity([0,0,0])
 
-def move(cont, FORWARD, BACK, LEFT, RIGHT, RUN_FAST, JUMP):
-    if LEFT:
-        if FORWARD:
+def move(cont, forward, back, left, right, run_fast, jump):
+    if left:
+        if forward:
             cont.activate(cont.actuators["for_left_dir"])
 
-        elif BACK:
+        elif back:
             cont.activate(cont.actuators["back_left_dir"])
 
         else:
             cont.activate(cont.actuators["left_dir"])
 
-    elif RIGHT:
-        if FORWARD:
+    elif right:
+        if forward:
             cont.activate(cont.actuators["for_right_dir"])
 
-        elif BACK:
+        elif back:
             cont.activate(cont.actuators["back_right_dir"])
 
         else:
             cont.activate(cont.actuators["right_dir"])
 
-    elif FORWARD:
+    elif forward:
         cont.activate(cont.actuators["forward_dir"])
 
-    elif BACK:
+    elif back:
         cont.activate(cont.actuators["backward_dir"])
 
     cont.activate(cont.actuators["Mouse"])
     own = cont.owner
-    normal_move(own, RUN_FAST, own["RUN"], JUMP)
+    normal_move(own, run_fast, own["run"], jump)
 
-def main(cont, own, FORWARD, BACK, LEFT, RIGHT, JUMP, AIM, FALL):
+def main(cont, own, forward, back, left, right, jump, aim, fall):
     cont.deactivate(cont.actuators["Mouse"])
     cont.deactivate(cont.actuators["forward_dir"])
     cont.deactivate(cont.actuators["backward_dir"])
@@ -116,19 +116,19 @@ def main(cont, own, FORWARD, BACK, LEFT, RIGHT, JUMP, AIM, FALL):
     sun_moon.worldPosition.x = own.worldPosition.x
     sun_moon.worldPosition.y = own.worldPosition.y
 
-    if FALL:
+    if fall:
         own.state = logic.KX_STATE3
     else:
-        RUN_FAST = own.children["Armature"]["RUN_FAST"] = own["RUN"] and own["stamina"] >= 1
-        if FORWARD or BACK or LEFT or RIGHT:
+        run_fast = own.children["Armature"]["run_fast"] = own["run"] and own["stamina"] >= 1
+        if forward or back or left or right:
             own["moving"] = True
-            if AIM:
-                aim_move(own, FORWARD, BACK, LEFT, RIGHT)
+            if aim:
+                aim_move(own, forward, back, left, right)
 
             else:
-                move(cont, FORWARD, BACK, LEFT, RIGHT, RUN_FAST, JUMP)
+                move(cont, forward, back, left, right, run_fast, jump)
 
-        elif JUMP:
+        elif jump:
             own.setLinearVelocity([0,0,6],True)
 
         elif own["moving"]:

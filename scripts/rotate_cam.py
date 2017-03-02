@@ -53,5 +53,5 @@ def main(cont):
             cam_dir.applyRotation([0,0,math.radians(0.4)],True)
             rot -= 1
 
-    aim(rot_aim, cam_dir, col, own.parent.parent.children["Armature"]["AIM"])
+    aim(rot_aim, cam_dir, col, own.parent.parent.children["Armature"]["aim"])
     cam_dir["rot"] = rot

@@ -18,16 +18,27 @@
 #
 from bge import logic
 
+DIST_LOC_MAX = 270
+DIST_LOC_MIN = 100
+
+DIST_LOC_MAX_DEATH = 240
+DIST_LOC_MIN_DEATH = 40
+
+DIST_LOC_CAM = 0
+DIST_LOC_CAM_DEATH = 0
+
+scene = logic.getCurrentScene()
+
 def main(cont):
     own = cont.owner
     try:
-        dist_loc = own.getDistanceTo(logic.getCurrentScene().objects["player_loc"]) #distance to player_loc
-        dist_cam = own.getDistanceTo(logic.getCurrentScene().objects["cam_pos"]) #distance to camera
+        dist_loc = own.getDistanceTo(scene.objects["player_loc"]) #distance to player_loc
+        dist_cam = own.getDistanceTo(scene.objects["cam_pos"]) #distance to camera
         if own["death"]:
-            if dist_loc >= 240 or (dist_loc > 40 and dist_loc - dist_cam > 0):
+            if dist_loc >= DIST_LOC_MAX_DEATH or (dist_loc > DIST_LOC_MIN_DEATH and dist_loc - dist_cam > DIST_LOC_CAM_DEATH):
                 own.endObject()
         else:
-            if dist_loc >= 270 or (dist_loc > 100 and dist_loc - dist_cam > 0):
+            if dist_loc >= DIST_LOC_MAX or (dist_loc > DIST_LOC_MIN and dist_loc - dist_cam > DIST_LOC_CAM):
                 own.endObject()
     except:
-        pass#own.endObject()
+        pass

@@ -34,7 +34,7 @@ def cam(cont):
             cont.activate(cont.actuators["pause"])
             own["pause"] = True
 
-def rigid_main(cont):
+def death_main(cont):
     if keyboard.events[events.RKEY] == JUST_ACTIVATED:
         cont.activate(cont.actuators["Message"])
         cont.activate(cont.actuators["Delete"])
@@ -42,17 +42,18 @@ def rigid_main(cont):
 def main(cont):
     own = cont.owner
     armature = own.children["Armature"]
-    FALL = own["FALL"] = not own.children["lower_cube"]["collision"]
-    FORWARD = armature["FORWARD"] = keyboard.events[events.WKEY] == ACTIVE
-    LEFT = armature["LEFT"] = keyboard.events[events.AKEY] == ACTIVE
-    BACK = armature["BACK"] = keyboard.events[events.SKEY] == ACTIVE
-    RIGHT = armature["RIGHT"] = keyboard.events[events.DKEY] == ACTIVE
+    fall = own["fall"] = not own.children["lower_cube"]["collision"]
+    forward = armature["forward"] = keyboard.events[events.WKEY] == ACTIVE
+    left = armature["left"] = keyboard.events[events.AKEY] == ACTIVE
+    back = armature["back"] = keyboard.events[events.SKEY] == ACTIVE
+    right = armature["right"] = keyboard.events[events.DKEY] == ACTIVE
     JUMP = keyboard.events[events.SPACEKEY] == ACTIVE
-    own["RUN"] = keyboard.events[events.LEFTSHIFTKEY] == ACTIVE or keyboard.events[events.RIGHTSHIFTKEY] == ACTIVE
-    AIM = own.children["shoot_point"]["AIM"] = armature["AIM"] = mouse.events[events.RIGHTMOUSE] == ACTIVE
-    own["HIT"] = mouse.events[events.LEFTMOUSE] == JUST_ACTIVATED
+    own["run"] = keyboard.events[events.LEFTSHIFTKEY] == ACTIVE or keyboard.events[events.RIGHTSHIFTKEY] == ACTIVE
+    aim = own.children["shoot_point"]["aim"] = armature["aim"] = mouse.events[events.RIGHTMOUSE] == ACTIVE
+    if mouse.events[events.LEFTMOUSE] == JUST_ACTIVATED:
+        own["hit"] = True
     previous_item = keyboard.events[events.QKEY] == JUST_ACTIVATED or mouse.events[events.WHEELDOWNMOUSE] == JUST_ACTIVATED
     next_item = mouse.events[events.WHEELUPMOUSE] == JUST_ACTIVATED
     switch_item.main(own, previous_item, next_item)
     eat.main(own, keyboard.events[events.EKEY] == JUST_ACTIVATED, own["item"], own["fish"], own["health"], 90)
-    player_motion.main(cont, own, FORWARD, BACK, LEFT, RIGHT, JUMP, AIM, FALL)
+    player_motion.main(cont, own, forward, back, left, right, JUMP, aim, fall)

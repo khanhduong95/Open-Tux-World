@@ -32,6 +32,7 @@ def gravity(cont):
 
 def main(cont):
     own = cont.owner
+    own["hit"] = False
     own.enableRigidBody()
     v = Vector((own["v_x"],own["v_y"],own["v_z"]))
     dv = Vector(own.worldLinearVelocity) - v
@@ -45,8 +46,6 @@ def main(cont):
             own["health"] -= max_dv * 0.2
         else:
             own["health"] -= max_dv * 0.1
-        print(own)
-        print(own["health"])
 
     elif min_dv < -45:
         if min_dv < -80:
@@ -55,8 +54,6 @@ def main(cont):
             own["health"] -= -min_dv * 0.2
         else:
             own["health"] -= -min_dv * 0.1
-        print(own)
-        print(own["health"])
 
     own["v_x"] = v.x
     own["v_y"] = v.y
@@ -66,7 +63,7 @@ def main(cont):
         own["hit_released"] = False
         own["death"] = True
         own.state = logic.KX_STATE4
-    elif max_dv < 1 and min_dv > -1 and (cont.sensors["Collision.001"].positive or not own["FALL"]):
+    elif max_dv < 1 and min_dv > -1 and (cont.sensors["Collision.001"].positive or not own["fall"]):
         own.disableRigidBody()
         own.worldOrientation[2] = [0.0,0.0,1.0]
         own.state = logic.KX_STATE2

@@ -17,10 +17,13 @@
 #    along with Open Tux World.  If not, see <http://www.gnu.org/licenses/>.
 #
 from bge import logic
+import pickle
 
 def main(cont):
     own = cont.owner
     logic.globalDict["player_id"] = id(own)
+    logic.globalDict["terrain_list"] = pickle.load(open("terrain_loc_rot.p", "rb"))[1]
+    logic.globalDict["AI_list"] = []
     own['stamina'] = own['max_stamina']
     own["item"] = 0
     own["snow"] = 20

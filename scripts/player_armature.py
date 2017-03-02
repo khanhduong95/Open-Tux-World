@@ -18,9 +18,9 @@
 #
 from bge import logic
 
-def aim_move(own, FORWARD, BACK, LEFT, RIGHT, started_aim, current_frame):
-    if FORWARD:
-        if LEFT:
+def aim_move(own, forward, back, left, right, started_aim, current_frame):
+    if forward:
+        if left:
             if current_frame <= 70:
                 current_frame = 70
 
@@ -29,7 +29,7 @@ def aim_move(own, FORWARD, BACK, LEFT, RIGHT, started_aim, current_frame):
             own.playAction("lower_aim", current_frame, current_frame+1, layer=0, play_mode=logic.KX_ACTION_MODE_PLAY)
             current_frame += 1
 
-        elif RIGHT:
+        elif right:
             if current_frame <= 130:
                 current_frame = 130
 
@@ -47,8 +47,8 @@ def aim_move(own, FORWARD, BACK, LEFT, RIGHT, started_aim, current_frame):
             own.playAction("lower_aim", current_frame, current_frame+1, layer=0, play_mode=logic.KX_ACTION_MODE_PLAY)
             current_frame += 1
 
-    elif BACK:
-        if LEFT:
+    elif back:
+        if left:
             if current_frame >= 190:
                 current_frame = 190
 
@@ -57,7 +57,7 @@ def aim_move(own, FORWARD, BACK, LEFT, RIGHT, started_aim, current_frame):
             own.playAction("lower_aim", current_frame, current_frame-1, layer=0, play_mode=logic.KX_ACTION_MODE_PLAY)
             current_frame -= 1
 
-        elif RIGHT:
+        elif right:
             if current_frame >= 130:
                 current_frame = 130
 
@@ -75,7 +75,7 @@ def aim_move(own, FORWARD, BACK, LEFT, RIGHT, started_aim, current_frame):
             own.playAction("lower_aim", current_frame, current_frame-1, layer=0, play_mode=logic.KX_ACTION_MODE_PLAY)
             current_frame -= 1
 
-    elif LEFT:
+    elif left:
         if current_frame >= 250:
             current_frame = 250
 
@@ -84,7 +84,7 @@ def aim_move(own, FORWARD, BACK, LEFT, RIGHT, started_aim, current_frame):
         own.playAction("lower_aim", current_frame, current_frame-1, layer=0, play_mode=logic.KX_ACTION_MODE_PLAY)
         current_frame -= 1
 
-    elif RIGHT:
+    elif right:
         if current_frame <= 190:
             current_frame = 190
 
@@ -104,10 +104,10 @@ def aim_move(own, FORWARD, BACK, LEFT, RIGHT, started_aim, current_frame):
     own["started_aim"] = started_aim
     own["current_frame"] = current_frame
 
-def move(own, FORWARD, BACK, LEFT, RIGHT, started_aim, current_frame):
+def move(own, forward, back, left, right, started_aim, current_frame):
 
-    if FORWARD or BACK or LEFT or RIGHT:
-        if own["RUN_FAST"]:
+    if forward or back or left or right:
+        if own["run_fast"]:
             if current_frame <= 0:
                 current_frame = 0
             elif current_frame >= 42:
@@ -115,7 +115,7 @@ def move(own, FORWARD, BACK, LEFT, RIGHT, started_aim, current_frame):
             own.playAction("run", current_frame, current_frame+2, layer=0, play_mode=logic.KX_ACTION_MODE_PLAY)
             current_frame += 2
 
-        elif own["RUN"]:
+        elif own["run"]:
             if current_frame <= 0:
                 current_frame = 0
             elif current_frame >= 42:
@@ -138,9 +138,9 @@ def move(own, FORWARD, BACK, LEFT, RIGHT, started_aim, current_frame):
     own["started_aim"] = started_aim
     own["current_frame"] = current_frame
 
-def action_armed(own, FALL, upper_current_frame, hit, hit_released):
+def action_armed(own, fall, upper_current_frame, hit, hit_released):
 
-    if FALL:
+    if fall:
         hit_released = False
         if upper_current_frame <= 0:
             own.playAction("upper_aim_armed", 0, 0, layer=1, play_mode=logic.KX_ACTION_MODE_PLAY)
@@ -150,8 +150,8 @@ def action_armed(own, FALL, upper_current_frame, hit, hit_released):
             upper_current_frame -= 1
 
     else:
-        if own["AIM"]:
-            if own.parent["HIT"] or (hit and upper_current_frame < 30):
+        if own["aim"]:
+            if own.parent["hit"] or (hit and upper_current_frame < 30):
                 if upper_current_frame < 10:
                     upper_current_frame = 10
                 else:
@@ -171,7 +171,7 @@ def action_armed(own, FALL, upper_current_frame, hit, hit_released):
                     upper_current_frame += 1
 
         else:
-            if own.parent["HIT"] or (hit and upper_current_frame < 30):
+            if own.parent["hit"] or (hit and upper_current_frame < 30):
                 if upper_current_frame < 10:
                     upper_current_frame = 10
                 else:
@@ -190,13 +190,13 @@ def action_armed(own, FALL, upper_current_frame, hit, hit_released):
                     own.playAction("upper_aim_armed", upper_current_frame, upper_current_frame-1, layer=1, play_mode=logic.KX_ACTION_MODE_PLAY)
                     upper_current_frame -= 1
 
-    own["HIT"] = hit
+    own["hit"] = hit
     own.parent["hit_released"] = hit_released
     own["upper_current_frame"] = upper_current_frame
 
-def action_unarmed(own, FALL, upper_current_frame, hit, hit_released):
+def action_unarmed(own, fall, upper_current_frame, hit, hit_released):
 
-    if FALL:
+    if fall:
         hit_released = False
         if upper_current_frame <= 0:
             own.playAction("upper_aim", 0, 0, layer=1, play_mode=logic.KX_ACTION_MODE_PLAY)
@@ -206,8 +206,8 @@ def action_unarmed(own, FALL, upper_current_frame, hit, hit_released):
             upper_current_frame -= 1
 
     else:
-        if own["AIM"]:
-            if own.parent["HIT"] or (hit and upper_current_frame < 30):
+        if own["aim"]:
+            if own.parent["hit"] or (hit and upper_current_frame < 30):
                 if upper_current_frame < 10:
                     upper_current_frame = 10
                 else:
@@ -227,7 +227,7 @@ def action_unarmed(own, FALL, upper_current_frame, hit, hit_released):
                     upper_current_frame += 1
 
         else:
-            if own.parent["HIT"] or (hit and upper_current_frame < 30):
+            if own.parent["hit"] or (hit and upper_current_frame < 30):
                 if upper_current_frame < 10:
                     upper_current_frame = 10
                 else:
@@ -246,37 +246,37 @@ def action_unarmed(own, FALL, upper_current_frame, hit, hit_released):
                     own.playAction("upper_aim", upper_current_frame, upper_current_frame-1, layer=1, play_mode=logic.KX_ACTION_MODE_PLAY)
                     upper_current_frame -= 1
 
-    own["HIT"] = hit
+    own["hit"] = hit
     own.parent["hit_released"] = hit_released
     own["upper_current_frame"] = upper_current_frame
 
 def action(cont):
     own = cont.owner
     upper_current_frame = own["upper_current_frame"]
-    hit = own["HIT"]
+    hit = own["hit"]
     hit_released = own.parent["hit_released"]
     if own.parent["death"]:
         own.state = logic.KX_STATE2
     elif own.parent["item"] == 0:
-        action_unarmed(own, own["FALL"], own["upper_current_frame"], own["HIT"], own.parent["hit_released"])
+        action_unarmed(own, own["fall"], own["upper_current_frame"], own["hit"], own.parent["hit_released"])
     else:
-        action_armed(own, own["FALL"], own["upper_current_frame"], own["HIT"], own.parent["hit_released"])
+        action_armed(own, own["fall"], own["upper_current_frame"], own["hit"], own.parent["hit_released"])
 
 def main(cont):
     own = cont.owner
-    if own["FALL"]:
+    if own["fall"]:
         own.playAction("fall", 7, 7, layer=0, play_mode=logic.KX_ACTION_MODE_PLAY)
         own["started_aim"] = 0
 
     else:
-        FORWARD = own["FORWARD"]
-        BACK = own["BACK"]
-        LEFT = own["LEFT"]
-        RIGHT = own["RIGHT"]
+        forward = own["forward"]
+        back = own["back"]
+        left = own["left"]
+        right = own["right"]
         started_aim = own["started_aim"]
         current_frame = own["current_frame"]
 
-        if own["AIM"]:
-            aim_move(own, FORWARD, BACK, LEFT, RIGHT, started_aim, current_frame)
+        if own["aim"]:
+            aim_move(own, forward, back, left, right, started_aim, current_frame)
         else:
-            move(own, FORWARD, BACK, LEFT, RIGHT, started_aim, current_frame)
+            move(own, forward, back, left, right, started_aim, current_frame)

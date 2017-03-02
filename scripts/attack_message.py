@@ -20,22 +20,21 @@ def shoot(cont):
     own = cont.owner
     col = cont.sensors["Collision"]
     if col.positive and id(col.hitObject) != own["owner_ID"]:
-        hitobj = col.hitObject
-        print(hitobj)
-        if "penguin" in hitobj:
-            hitobj["health"] -= own.mass*0.001
-            if "AI" in hitobj:
-                hitobj["normal"] = False
-                hitobj["attacker_ID"] = own["owner_ID"]
+        hitObj = col.hitObject
+        if "penguin" in hitObj:
+            hitObj["health"] -= own.mass*0.001
+            if "AI" in hitObj:
+                hitObj["normal"] = False
+                hitObj["attacker_ID"] = own["owner_ID"]
         own.endObject()
 
 def hit(cont):
     own = cont.owner
     col = cont.sensors["Collision"]
     if col.positive and id(col.hitObject) != own["owner_ID"]:
-        hitobj = col.hitObject
-        if "penguin" in hitobj:
-            hitobj["health"] -= own.mass*0.0001
-            if "AI" in hitobj:
-                hitobj["normal"] = False
-                hitobj["attacker_ID"] = own["owner_ID"]
+        hitObj = col.hitObject
+        if "penguin" in hitObj:
+            hitObj["health"] -= own.mass*0.0001
+            if "AI" in hitObj:
+                hitObj["normal"] = False
+                hitObj["attacker_ID"] = own["owner_ID"]
