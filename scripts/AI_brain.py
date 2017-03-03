@@ -16,10 +16,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Open Tux World.  If not, see <http://www.gnu.org/licenses/>.
 #
-from bge import logic
-from scripts import AI_motion, switch_item, eat
+from scripts import common_functions as cf, AI_motion, switch_item, eat
 from random import randint, choice
 
+logic = cf.logic
 scene = logic.getCurrentScene()
 
 def attacked_state(cont, own, brain, armature, front_sensor, attacker):

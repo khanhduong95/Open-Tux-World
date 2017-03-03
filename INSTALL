@@ -1,7 +1,12 @@
-1. Method 1 (no installation required, only applies to released versions)
+# Installation instructions
 
-You can run the game by opening the executable file named "game" / "game.exe" / "game.app" (no Blender required)
+The following instructions apply for building from source only. For binary versions, you can run the game by opening the executable file named "game" / "game.exe" / "game.app" (no Blender required)
 
-2. Method 2
-
-You need to install Blender first ( https://www.blender.org/ ), then open the game.blend file with Blender (or game_test.blend if you wish to modify the source), enable the addon to export game runtime (File > User Preferences > Addons > Game Engine: Save As Game Engine Runtime) and export it as game engine runtime (File > Export > Save As Game Engine Runtime)
+- You need to install Blender first ( https://www.blender.org/ )
+- Open the command window and cd to the game main directory (which contains .blend files)
+- Run the following commands in the right order:
+ <path/to/Blender/executable> -b terrain_src.blend -P build_terrain.py
+ <path/to/Blender/executable> -b items_src.blend -P build_item.py
+ <path/to/Blender/executable> -b penguin_src.blend -P build_penguin.py
+ <path/to/Blender/executable> -b game.blend -P install.py
+- Now you can run the game by opening the file named "game" / "game.exe" / "game.app" (which depends on the OS)

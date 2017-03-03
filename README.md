@@ -25,6 +25,10 @@ R (when dead) - respawn
 
 Esc - exit game
 
+# Installation instructions (for building from source only)
+
+See INSTALL file for more details.
+
 # License
 
     Copyright (C) 2016 Dang Duong
