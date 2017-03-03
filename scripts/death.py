@@ -21,7 +21,7 @@ from scripts import collect
 
 def main(cont):
     own = cont.owner
-    own["HIT"] = own["hit_released"] = own["RUN"] = False
+    own["hit"] = own["hit_released"] = own["run"] = False
     if own["fish"] > 0:
         collect.generate(cont, own, 3, own["fish"], logic.getCurrentScene())
         own["fish"] = 0

@@ -16,33 +16,32 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Open Tux World.  If not, see <http://www.gnu.org/licenses/>.
 #
-from bge import logic
-import math
+import scripts.common_functions as cf
 from mathutils import Vector
+
+DANGER_SPEED = 40
+HIGH_DANGER_SPEED = 60
+FATAL_SPEED = 80
+DAMAGE_RATE = 0.05
+HIGH_DAMAGE_RATE = 0.15
+
+logic = cf.logic
 
 def main(cont):
     own = cont.owner
     v = Vector((own["v_x"],own["v_y"],own["v_z"]))
     dv = Vector(own.worldLinearVelocity) - v
     v += dv
-    max_dv = max(dv.x,dv.y,dv.z)
-    min_dv = min(dv.x,dv.y,dv.z)
-    if max_dv > 40:
-        if max_dv > 60:
-            own["health"] -= max_dv * 0.1
+    speed = cf.getDistance([dv.x, dv.y, dv.z])
+    if speed > DANGER_SPEED:
+        if speed > FATAL_SPEED:
+            own["health"] = 0
+        elif speed > HIGH_DANGER_SPEED:
+            own["health"] -= speed * HIGH_DAMAGE_RATE
         else:
-            own["health"] -= max_dv * 0.05
-        print(own)
-        print(own["health"])
-        own.state = logic.KX_STATE3
-
-    elif min_dv < -40:
-        if min_dv < -60:
-            own["health"] -= -min_dv * 0.1
-        else:
-            own["health"] -= -min_dv * 0.05
-        print(own)
-        print(own["health"])
+            own["health"] -= speed * DAMAGE_RATE
+        #print(own)
+        #print(own["health"])
         own.state = logic.KX_STATE3
 
     own["v_x"] = v.x
