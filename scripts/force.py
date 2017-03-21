@@ -16,30 +16,41 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Open Tux World.  If not, see <http://www.gnu.org/licenses/>.
 #
-import scripts.common_functions as cf
+from scripts import common
 from mathutils import Vector
 
-DANGER_SPEED = 40
-HIGH_DANGER_SPEED = 60
-FATAL_SPEED = 80
-DAMAGE_RATE = 0.05
-HIGH_DAMAGE_RATE = 0.15
+logic = common.logic
+scene = common.scene
 
-logic = cf.logic
+def border_check(own):
+    if own.worldPosition[0] < -common.TERRAIN_BORDER_X:
+        own.worldPosition[0] = -common.TERRAIN_BORDER_X
+    elif own.worldPosition[0] > common.TERRAIN_BORDER_X:
+        own.worldPosition[0] = common.TERRAIN_BORDER_X
+    if own.worldPosition[1] < -common.TERRAIN_BORDER_Y:
+        own.worldPosition[1] = -common.TERRAIN_BORDER_Y
+    elif own.worldPosition[0] > common.TERRAIN_BORDER_Y:
+        own.worldPosition[1] = common.TERRAIN_BORDER_Y
+    if own.worldPosition[2] <= 0:
+        own.worldPosition = scene.objects["terrain_spawner"].worldPosition
+        if own.worldPosition[2] <= 0:
+            own.worldPosition[2] += 5
 
 def main(cont):
     own = cont.owner
+    border_check(own)
+
     v = Vector((own["v_x"],own["v_y"],own["v_z"]))
     dv = Vector(own.worldLinearVelocity) - v
     v += dv
-    speed = cf.getDistance([dv.x, dv.y, dv.z])
-    if speed > DANGER_SPEED:
-        if speed > FATAL_SPEED:
+    speed = common.getDistance([dv.x, dv.y, dv.z])
+    if speed > common.DANGER_SPEED:
+        if speed > common.FATAL_SPEED:
             own["health"] = 0
-        elif speed > HIGH_DANGER_SPEED:
-            own["health"] -= speed * HIGH_DAMAGE_RATE
+        elif speed > common.HIGH_DANGER_SPEED:
+            own["health"] -= speed * common.HIGH_DAMAGE_RATE
         else:
-            own["health"] -= speed * DAMAGE_RATE
+            own["health"] -= speed * common.DAMAGE_RATE
         #print(own)
         #print(own["health"])
         own.state = logic.KX_STATE3

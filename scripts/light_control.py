@@ -25,8 +25,6 @@ def main(cont):
     delay = cont.sensors["Delay"]
     hour = own["hour"]
     minute = own["minute"]
-    daytime = own["daytime"]
-
     if delay.positive:
         minute += 1
         if minute == 60:
@@ -41,9 +39,9 @@ def main(cont):
         moon_sky.energy = 0.0
         sun_sky.energy = 1.0
     else:
-        moon.energy = 0.025
+        moon.energy = 0.05
         sun.energy = 0.0
-        moon_sky.energy = 0.025
+        moon_sky.energy = 0.05
         sun_sky.energy = 0.0
 
     own["hour"] = hour

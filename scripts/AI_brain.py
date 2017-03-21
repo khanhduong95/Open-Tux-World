@@ -16,10 +16,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Open Tux World.  If not, see <http://www.gnu.org/licenses/>.
 #
-from scripts import common_functions as cf, AI_motion, switch_item, eat
+from scripts import common, AI_motion, switch_item, eat
 from random import randint, choice
 
-logic = cf.logic
+logic = common.logic
 scene = logic.getCurrentScene()
 
 def attacked_state(cont, own, brain, armature, front_sensor, attacker):
@@ -66,7 +66,6 @@ def attacked_state(cont, own, brain, armature, front_sensor, attacker):
                 else:
                     own["hit"] = distance < 15# and not 10 < armature["upper_current_frame"] <= 30
                 if own["hit"]:
-                    print(str(own)+" - "+str(id(own))+" attacks "+str(attacker)+" - "+str(id(attacker))) 
                     forward = False
                 else:
                     forward = own["moving"] = True
