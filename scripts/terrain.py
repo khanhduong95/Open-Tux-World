@@ -16,37 +16,17 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Open Tux World.  If not, see <http://www.gnu.org/licenses/>.
 #
-from scripts import common_functions as cf
-from bge import logic
+from scripts import common
 
-AI_MAX_DISTANCE = 100
-AI_CLOSE_DISTANCE = 20
-AI_MAX_COUNT = 10
-AI_CLOSE_COUNT = 2
-TERRAIN_GROUP_MAX_DISTANCE = 2500
-TERRAIN_CHILD_GROUP_MAX_DISTANCE = 1500
-TERRAIN_CHILD_CHILD_GROUP_MAX_DISTANCE = 1500
-TERRAIN_MAX_DISTANCE = 500
-TERRAIN_PHYSICS_MAX_DISTANCE = 250
+logic = common.logic
+scene = common.scene
 
-scene = logic.getCurrentScene()
-
-def terrain_main(cont):
+def main(cont):
     try:
         player = scene.objects["Cube"]
     except:
         return
     own = cont.owner
     dist = own.worldPosition - player.worldPosition
-    if -TERRAIN_MAX_DISTANCE > dist.x or dist.x > TERRAIN_MAX_DISTANCE or -TERRAIN_MAX_DISTANCE > dist.y or dist.y > TERRAIN_MAX_DISTANCE:
-        own.endObject()
-
-def terrain_physics_main(cont):
-    try:
-        player = scene.objects["Cube"]
-    except:
-        return
-    own = cont.owner
-    dist = own.getDistanceTo(player)
-    if dist > TERRAIN_PHYSICS_MAX_DISTANCE:
+    if dist > common.TERRAIN_PHYSICS_MAX_DISTANCE:
         own.endObject()

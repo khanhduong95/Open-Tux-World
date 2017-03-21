@@ -16,7 +16,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Open Tux World.  If not, see <http://www.gnu.org/licenses/>.
 #
-from random import uniform
+from scripts import common
+
+logic = common.logic
+scene = common.scene
 
 def create_image(own, item, scene): #create an image of each collectible item
     if item == 1:
@@ -28,9 +31,9 @@ def create_image(own, item, scene): #create an image of each collectible item
     image = scene.addObject(string,own,0)
     image.setParent(own,0,1)
     if item == 3:
-        image.worldScale = [0.143*2,0.043*2,0.065*2]
+        image.worldScale = [0.143*2, 0.043*2, 0.065*2]
     else:
-        image.worldScale = [0.197,0.197,0.197]
+        image.worldScale = [0.197, 0.197, 0.197]
 
 def generate(cont, own, item, amount, scene): #generate collectible items
     new = scene.addObject("collect_item",own,0)
@@ -41,6 +44,13 @@ def generate(cont, own, item, amount, scene): #generate collectible items
 
 def main(cont):
     own = cont.owner
+
+    try:
+        if own.getDistanceTo(scene.objects["Cube"]) > common.AI_MAX_DISTANCE:
+            own.endObject()
+    except:
+        pass
+    
     col = cont.sensors["collect"]
     item = own["item"]
     amount = own["amount"]
