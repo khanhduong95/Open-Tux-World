@@ -32,18 +32,28 @@ def main(cont):
             hour += 1
             if hour == 24:
                 hour = 0
-    daytime = 6 <= hour < 18
-    if daytime:
+    #daytime = 6 <= hour < 18
+    if 7 <= hour < 17:
         moon.energy = 0.0
         sun.energy = 1.0
         moon_sky.energy = 0.0
         sun_sky.energy = 1.0
+    elif 6 <= hour < 7 or 17 <= hour < 18:
+        moon.energy = 0.0
+        sun.energy = 0.75
+        moon_sky.energy = 0.0
+        sun_sky.energy = 0.75
+    elif 5 <= hour < 6 or 18 <= hour < 19:
+        moon.energy = 0.0
+        sun.energy = 0.5
+        moon_sky.energy = 0.0
+        sun_sky.energy = 0.5
     else:
-        moon.energy = 0.05
+        moon.energy = 0.3
         sun.energy = 0.0
-        moon_sky.energy = 0.05
+        moon_sky.energy = 0.3
         sun_sky.energy = 0.0
 
     own["hour"] = hour
     own["minute"] = minute
-    own["daytime"] = daytime
+    #own["daytime"] = daytime

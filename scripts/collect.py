@@ -46,7 +46,7 @@ def main(cont):
     own = cont.owner
 
     try:
-        if own.getDistanceTo(scene.objects["Cube"]) > common.AI_MAX_DISTANCE:
+        if own.getDistanceTo(scene.objects["Cube"]) > common.ITEM_MAX_DISTANCE:
             own.endObject()
     except:
         pass

@@ -90,8 +90,9 @@ def cut_terrain(obj_name, obj_length, obj_width, obj_suffix):
     else:
         #add_logic_bricks(obj_name, obj_suffix)
         #add_physics(obj_name)
-        terrain_loc_rot.append([terrain.rotation_euler[0], terrain.rotation_euler[1], terrain.rotation_euler[2]])
-        terrain_loc_rot.append([terrain.scale[0], terrain.scale[1], terrain.scale[2]])
+        terrain_loc_rot[1] = obj_name+obj_suffix
+        #terrain_loc_rot.append([terrain.rotation_euler[0], terrain.rotation_euler[1], terrain.rotation_euler[2]])
+        #terrain_loc_rot.append([terrain.scale[0], terrain.scale[1], terrain.scale[2]])
     ops.object.select_all(action='DESELECT')
     return terrain_loc_rot
 

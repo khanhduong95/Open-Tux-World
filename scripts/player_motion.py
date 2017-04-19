@@ -22,96 +22,86 @@ def aim_move(own, forward, back, left, right):
 
     if left:
         if forward:
-            own.setLinearVelocity([-7,-7,0],True)
+            own.setLinearVelocity([-7, -7, 0], True)
 
         elif back:
-            own.setLinearVelocity([7,-7,0],True)
+            own.setLinearVelocity([7, -7, 0], True)
 
         else:
-            own.setLinearVelocity([0,-10,0],True)
+            own.setLinearVelocity([0, -10, 0], True)
 
     elif right:
         if forward:
-            own.setLinearVelocity([-7,7,0],True)
+            own.setLinearVelocity([-7, 7, 0], True)
 
         elif back:
-            own.setLinearVelocity([7,7,0],True)
+            own.setLinearVelocity([7, 7, 0], True)
 
         else:
-            own.setLinearVelocity([0,10,0],True)
+            own.setLinearVelocity([0, 10, 0], True)
 
     elif forward:
-        own.setLinearVelocity([-10,0,0],True)
+        own.setLinearVelocity([-10, 0, 0], True)
 
     elif back:
-        own.setLinearVelocity([10,0,0],True)
+        own.setLinearVelocity([10, 0, 0], True)
 
-def normal_move(own, run_fast, run, jump):
+def normal_move(own, run, run_fast, jump):
     if run_fast:
         if jump:
-            own.setLinearVelocity([-30,0,6],True)
+            own.setLinearVelocity([-30, 0, 6], True)
         else:
-            own.setLinearVelocity([-30,0,0],True)
+            own.setLinearVelocity([-30, 0, 0], True)
     elif run:
         if jump:
-            own.setLinearVelocity([-20,0,6],True)
+            own.setLinearVelocity([-20, 0, 6], True)
         else:
-            own.setLinearVelocity([-20,0,0],True)
+            own.setLinearVelocity([-20, 0, 0], True)
     else:
         if jump:
-            own.setLinearVelocity([-10,0,6],True)
+            own.setLinearVelocity([-10, 0, 6], True)
         else:
-            own.setLinearVelocity([-10,0,0],True)
+            own.setLinearVelocity([-10, 0, 0], True)
 
 def stop(own):
-    own.setLinearVelocity([0.00000012,0,0])
+    own.setLinearVelocity([0.00000012, 0, 0])
     own["moving"] = False
-    own.setLinearVelocity([0,0,0])
+    own.setLinearVelocity([0, 0, 0])
 
-def move(cont, forward, back, left, right, run_fast, jump):
-    if left:
-        if forward:
-            cont.activate(cont.actuators["for_left_dir"])
-
-        elif back:
-            cont.activate(cont.actuators["back_left_dir"])
-
-        else:
-            cont.activate(cont.actuators["left_dir"])
-
-    elif right:
-        if forward:
-            cont.activate(cont.actuators["for_right_dir"])
-
-        elif back:
-            cont.activate(cont.actuators["back_right_dir"])
-
-        else:
-            cont.activate(cont.actuators["right_dir"])
-
-    elif forward:
-        cont.activate(cont.actuators["forward_dir"])
-
-    elif back:
-        cont.activate(cont.actuators["backward_dir"])
-
-    cont.activate(cont.actuators["Mouse"])
+def act_actuator(cont, name):
+    cont.activate(cont.actuators[name])
+    
+def deact_actuator(cont, name):
+    cont.deactivate(cont.actuators[name])
+    
+def move(cont, forward_dir, forward, back, left, right, run, run_fast, jump):
+    act_actuator(cont, "forward_dir")
     own = cont.owner
-    normal_move(own, run_fast, own["run"], jump)
+    if forward:
+        forward_dir.localPosition[0] = -3
+    elif back:
+        forward_dir.localPosition[0] = 3
+    else:
+        forward_dir.localPosition[0] = 0
+        
+    if left:
+        forward_dir.localPosition[1] = -3
+    elif right:
+        forward_dir.localPosition[1] = 3
+    else:
+        forward_dir.localPosition[1] = 0
+
+    act_actuator(cont, "Mouse")
+    normal_move(own, run, run_fast, jump)
 
 def main(cont, own, forward, back, left, right, jump, aim, fall):
-    cont.deactivate(cont.actuators["Mouse"])
-    cont.deactivate(cont.actuators["forward_dir"])
-    cont.deactivate(cont.actuators["backward_dir"])
-    cont.deactivate(cont.actuators["left_dir"])
-    cont.deactivate(cont.actuators["right_dir"])
-    cont.deactivate(cont.actuators["for_left_dir"])
-    cont.deactivate(cont.actuators["for_right_dir"])
-    cont.deactivate(cont.actuators["back_left_dir"])
-    cont.deactivate(cont.actuators["back_right_dir"])
+    forward_dir = own.children["camera_track"].children["forward_dir"]
+    deact_actuator(cont, "Mouse")
+    deact_actuator(cont, "forward_dir")
+    forward_dir.localPosition[0] = -3
+    forward_dir.localPosition[1] = 0
 
-    if own.worldOrientation[2] != [0.0,0.0,1.0]:
-         own.worldOrientation[2] = [0.0,0.0,1.0]
+    own.worldOrientation[2] = [0.0, 0.0, 1.0]
     sun_moon = logic.getCurrentScene().objects["sun_moon_holder_parent"]
     sun_moon.worldPosition.x = own.worldPosition.x
     sun_moon.worldPosition.y = own.worldPosition.y
@@ -119,17 +109,18 @@ def main(cont, own, forward, back, left, right, jump, aim, fall):
     if fall:
         own.state = logic.KX_STATE3
     else:
-        run_fast = own.children["Armature"]["run_fast"] = own["run"] and own["stamina"] >= 1
+        run = own["run"]
+        run_fast = own.children["Armature"]["run_fast"] = run and own["stamina"] > 0
         if forward or back or left or right:
             own["moving"] = True
             if aim:
                 aim_move(own, forward, back, left, right)
 
             else:
-                move(cont, forward, back, left, right, run_fast, jump)
+                move(cont, forward_dir, forward, back, left, right, run, run_fast, jump)
 
         elif jump:
-            own.setLinearVelocity([0,0,6],True)
+            own.setLinearVelocity([0, 0, 6], True)
 
         elif own["moving"]:
             stop(own)

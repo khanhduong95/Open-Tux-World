@@ -20,12 +20,15 @@ from bge import logic
 
 def change_item(own, new, current):
     scene = logic.getCurrentScene()
-    if current == 1:
-        own.children["snow_ball"].endObject()
-    elif current == 2:
-        own.children["ice_cube"].endObject()
-    elif current == 3:
-        own.children["fish"].endObject()
+    try:
+        if current == 1:
+            own.children["snow_ball"].endObject()
+        elif current == 2:
+            own.children["ice_cube"].endObject()
+        elif current == 3:
+            own.children["fish"].endObject()
+    except:
+        pass
     if new == 1:
         snow = scene.addObject("snow_ball",own,0)
         snow.setParent(own,0,1)

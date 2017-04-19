@@ -29,13 +29,13 @@ def attacked_state(cont, own, brain, armature, front_sensor, attacker):
         if front_sensor:
             forward = False
             if left_right == 0:
-                left_right = randint(1,2)
+                left_right = randint(1, 2)
 
             left = left_right == 1
             right = left_right == 2
         else:
             if left_right == 0:
-                own.alignAxisToVect([-vec.x,-vec.y,0],0,0.5)#point away from attacker
+                own.alignAxisToVect([-vec.x , -vec.y, 0], 0, 0.5)#point away from attacker
                 left = right = False
             else:
                 left = left_right == 1
@@ -58,7 +58,7 @@ def attacked_state(cont, own, brain, armature, front_sensor, attacker):
             left = left_right == 1
             right = left_right == 2
         else:
-            own.alignAxisToVect([vec.x,vec.y,0],0,0.5)#point to attacker
+            own.alignAxisToVect([vec.x , vec.y, 0], 0, 0.5)#point to attacker
             if distance < 5 or (distance < 15 and own["item"] != 0):
                 aim = True
                 if own["item"] == 0:
@@ -95,7 +95,7 @@ def normal_state(cont, own, brain, armature, front_sensor):
     if front_sensor:
         forward = False
         if left_right == 0:
-            left_right = randint(1,2)
+            left_right = randint(1, 2)
 
         left = left_right == 1
         right = left_right == 2

@@ -110,7 +110,15 @@ def aim_move(own, forward, back, left, right, started_aim, current_frame):
 
 def move(own, parent, moving, started_aim, current_frame):
     if moving:
-        if parent["run"]:
+        if "player" in parent and own["run_fast"]:
+            if current_frame <= 0:
+                current_frame = 0
+            elif current_frame >= 42:
+                current_frame = 14
+            own.playAction("run", current_frame, current_frame+2, layer=0, play_mode=logic.KX_ACTION_MODE_PLAY)
+            current_frame += 2
+
+        elif parent["run"]:
             if current_frame <= 0:
                 current_frame = 0
             elif current_frame >= 42:
