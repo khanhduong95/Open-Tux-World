@@ -22,53 +22,80 @@ logic = common.logic
 scene = common.scene
 terrain_spawner = scene.objects["terrain_spawner"]
 
-def compare_distance(own, terrain_loc, dist_const):
-    return common.getDistance([terrain_loc[0] - own.worldPosition[0], terrain_loc[1] - own.worldPosition[1], terrain_loc[2] - own.worldPosition[2]]) < dist_const
+AI_DIST_LOC_MAX = 300
+AI_DIST_LOC_MIN = 100
+AI_DIST_LOC_MAX_DEATH = 150
+AI_DIST_LOC_MIN_DEATH = 40
 
-def check_AI(terrain):
+def close_distance(own_pos, terrain_loc, dist_const):
+    return common.getDistance([terrain_loc[0] - own_pos[0], terrain_loc[1] - own_pos[1], terrain_loc[2] - own_pos[2]]) < dist_const
+
+def check_AI(own):
     AI_list = logic.globalDict["AI_list"]
-    if len(AI_list) <= common.AI_MAX_COUNT:
-        close_AI = 0
-        for AI_id in AI_list:
-            try:
-                AI = scene.objects.from_id(AI_id)
-                if AI.getDistanceTo(terrain) <= common.AI_CLOSE_DISTANCE:
-                    close_AI += 1
-            except:
-                logic.globalDict["AI_list"].remove(AI_id)
+    close_AI = 0
+    AI_count = 0
+    for AI_id in AI_list:
+        try:
+            AI = scene.objects.from_id(AI_id)
+            if AI.getDistanceTo(own) <= common.AI_CLOSE_DISTANCE:
+                close_AI += 1
+                AI_count += 1
+            else:
+                dist_loc = AI.getDistanceTo(own) #distance to player_loc
+                dist_cam = AI.getDistanceTo(own.parent.children["camera_track"].children["camera_track2"].children["cam_dir2"].children["cam_dir"].children["cam_pos"]) #distance to camera
+        
+                if AI["death"] and (dist_loc >= AI_DIST_LOC_MAX_DEATH or (dist_loc > AI_DIST_LOC_MIN_DEATH and dist_loc > dist_cam)):
+                    AI.endObject()
+                    logic.globalDict["AI_list"].remove(AI_id)
 
-        if close_AI < common.AI_CLOSE_COUNT:
-            try:
-                player = scene.objects["Cube"]
-                dist_player = terrain.getDistanceTo(player)
-                dist_for_dir = terrain.getDistanceTo(player.children["camera_track"].children["forward_dir"])
-                if common.AI_SPAWN_MIN_DISTANCE < dist_player < common.AI_SPAWN_MAX_DISTANCE and dist_player < dist_for_dir:
-                    terrain_spawner.worldPosition = terrain.worldPosition
-                    terrain_spawner.worldPosition[2] += 5
-                    new_AI = scene.addObject("AI_penguin", terrain_spawner, 0)
-                    AI_Cube = new_AI.groupMembers["AI_Cube"]
-                    logic.globalDict["AI_list"].append(id(AI_Cube))
-                    
-            except:
-                return
+                elif dist_loc >= AI_DIST_LOC_MAX or (dist_loc > AI_DIST_LOC_MIN and dist_loc > dist_cam):
+                    AI.endObject()
+                    logic.globalDict["AI_list"].remove(AI_id)
 
+                else:
+                    AI_count += 1
 
-def player_terrain(cont):
+        except:
+            logic.globalDict["AI_list"].remove(AI_id)
+
+    return [AI_count, close_AI]
+
+def spawn_AI(own, terrain, AI_count, close_AI):
+    if AI_count <= common.AI_MAX_COUNT and close_AI < common.AI_CLOSE_COUNT:
+        dist_player = terrain.getDistanceTo(own)
+        dist_cam = terrain.getDistanceTo(own.parent.children["camera_track"].children["camera_track2"].children["cam_dir2"].children["cam_dir"].children["cam_pos"])
+        if common.AI_SPAWN_MIN_DISTANCE < dist_player < common.AI_SPAWN_MAX_DISTANCE and dist_player > dist_cam:
+            terrain_spawner.worldPosition = terrain.worldPosition
+            terrain_spawner.worldPosition[2] += 5
+            new_AI = scene.addObject("AI_penguin", terrain_spawner, 0).groupMembers["AI_Cube"]
+            logic.globalDict["AI_list"].append(id(new_AI))
+            return [AI_count + 1, close_AI + 1]
+        
+    return [AI_count, close_AI]
+
+def main(cont):
     own = cont.owner
-    terrain_list = logic.globalDict["terrain_list"]
-    for index in range(6):
-        if compare_distance(own, terrain_list[index][0], common.TERRAIN_GROUP_MAX_DISTANCE):
-            for index_child in range(6):
-                if compare_distance(own, terrain_list[index][1][index_child][0], common.TERRAIN_CHILD_GROUP_MAX_DISTANCE):
-                    for index_child_child in range(6):
-                        if compare_distance(own, terrain_list[index][1][index_child][1][index_child_child][0], common.TERRAIN_CHILD_CHILD_GROUP_MAX_DISTANCE):
-                            for index_child_child_child in range(6):
-                                index_child_child_child_pos = terrain_list[index][1][index_child][1][index_child_child][1][index_child_child_child][0]
-                                terrain_name = "terrain_"+str(index)+"_"+str(index_child)+"_"+str(index_child_child)+"_"+str(index_child_child_child)
+    own_pos = own.worldPosition
+    check_AI_results = check_AI(own)#AI_count, close_AI
+    for terrain in logic.globalDict["terrain_list"]:
+        if close_distance(own_pos, terrain[0], common.TERRAIN_GROUP_MAX_DISTANCE):
+            for terrain_child in terrain[1]:
+                if close_distance(own_pos, terrain_child[0], common.TERRAIN_CHILD_GROUP_MAX_DISTANCE):
+                    for terrain_child_child in terrain_child[1]:
+                        if close_distance(own_pos, terrain_child_child[0], common.TERRAIN_CHILD_CHILD_GROUP_MAX_DISTANCE):
+                            for terrain_child_child_child in terrain_child_child[1]:
+                                index_child_child_child_pos = terrain_child_child_child[0]
+                                terrain_name = terrain_child_child_child[1]
                                 try:
-                                    terrain_physics = scene.objects[terrain_name+"_physics"]
-                                    check_AI(terrain_physics)
+                                    terrain_physics = scene.objects[terrain_name]
+                                    check_AI_results = spawn_AI(own, terrain_physics, check_AI_results[0], check_AI_results[1])
+
                                 except:
-                                    if compare_distance(own, index_child_child_child_pos, common.TERRAIN_PHYSICS_MAX_DISTANCE):
+                                    if close_distance(own_pos, index_child_child_child_pos, common.TERRAIN_PHYSICS_MAX_DISTANCE):
                                         terrain_spawner.worldPosition = index_child_child_child_pos
-                                        scene.addObject(terrain_name+"_physics", terrain_spawner, 0)
+                                        scene.addObject(terrain_name, terrain_spawner, 0)
+
+
+
+
+

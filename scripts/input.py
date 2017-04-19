@@ -36,8 +36,13 @@ def cam(cont):
 
 def death_main(cont):
     if keyboard.events[events.RKEY] == JUST_ACTIVATED:
-        cont.activate(cont.actuators["Message"])
-        cont.activate(cont.actuators["Delete"])
+        own = cont.owner
+        own.state = logic.KX_STATE1
+        armature = own.children["Armature"]
+        armature.state = logic.KX_STATE1
+        armature.children["grab_point"].state = logic.KX_STATE1
+        #cont.activate(cont.actuators["Message"])
+        #cont.activate(cont.actuators["Delete"])
 
 def main(cont):
     own = cont.owner

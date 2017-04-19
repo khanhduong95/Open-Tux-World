@@ -6,7 +6,6 @@ context = bpy.context
 scene = context.scene
 logic = ops.logic
 layers = scene.layers
-ops.object.mode_set(mode='OBJECT')
 
 player = objects["body"]
 AI = objects["AI_body"]

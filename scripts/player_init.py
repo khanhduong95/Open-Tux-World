@@ -19,6 +19,11 @@
 from bge import logic
 import pickle
 
+scene = logic.getCurrentScene()
+
+DEFAULT_NUM_ITEM = 20
+DEFAULT_HEALTH = 90
+
 def main(cont):
     own = cont.owner
     logic.globalDict["player_id"] = id(own)
@@ -26,9 +31,10 @@ def main(cont):
     logic.globalDict["AI_list"] = []
     own['stamina'] = own['max_stamina']
     own["item"] = 0
-    own["snow"] = 20
-    own["ice"] = 20
-    own["fish"] = 20
-    scene = logic.getCurrentScene()
+    own["death"] = False
+    own["health"] = DEFAULT_HEALTH
+    own["snow"] = DEFAULT_NUM_ITEM
+    own["ice"] = DEFAULT_NUM_ITEM
+    own["fish"] = DEFAULT_NUM_ITEM
     scene.active_camera = own.children["camera_track"].children["camera_track2"].children["cam_dir2"].children["cam_dir"].children["cam_holder"].children["Camera"]
     own.state = logic.KX_STATE2
