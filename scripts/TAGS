@@ -1,0 +1,168 @@
+
+fall.py,97
+logic = common.logiclogic22,812
+def gravity(cont):gravity24,834
+def main(cont):main35,1063
+
+force.py,140
+logic = common.logiclogic22,812
+scene = common.scenescene23,833
+def border_check(own):border_check25,855
+def main(cont):main39,1512
+
+light_control.py,28
+def main(cont):main19,755
+
+rotate_cam.py,83
+def aim(rot_aim, cam_dir, collision, aim):aim21,768
+def main(cont):main41,1389
+
+spawning.py,307
+logic = common.logiclogic21,783
+scene = common.scenescene22,804
+terrain_spawner = scene.objects["terrain_spawner"]terrain_spawner23,825
+def compare_distance(own, terrain_loc, dist_const):compare_distance25,877
+def check_AI(terrain):check_AI28,1092
+def player_terrain(cont):player_terrain56,2316
+
+terrain.py,96
+logic = common.logiclogic21,783
+scene = common.scenescene22,804
+def main(cont):main24,826
+
+input.py,285
+keyboard = logic.keyboardkeyboard22,838
+mouse = logic.mousemouse23,864
+JUST_ACTIVATED = logic.KX_INPUT_JUST_ACTIVATEDJUST_ACTIVATED24,884
+ACTIVE = logic.KX_INPUT_ACTIVEACTIVE25,931
+def cam(cont):cam27,963
+def death_main(cont):death_main37,1262
+def main(cont):main47,1649
+
+display.py,134
+def get_scene(string):get_scene21,778
+def amount(cont):amount27,907
+def item(cont):item45,1400
+def health(cont):health76,2579
+
+switch_item.py,177
+def check_item_previous(own, item_number):check_item_previous19,755
+def check_item_next(own, item_number):check_item_next38,1227
+def main(own, previous, next):main57,1665
+
+grab.py,84
+def change_item(own, new, current):change_item21,778
+def main(cont):main45,1544
+
+attack_message.py,57
+def shoot(cont):shoot19,755
+def hit(cont):hit31,1154
+
+AI_init.py,28
+def main(cont):main22,805
+
+collect.py,286
+logic = common.logiclogic21,783
+scene = common.scenescene22,804
+def create_image(own, item, scene): #create an image of each collectible itemcreate_image24,826
+def generate(cont, own, item, amount, scene): #generate collectible itemsgenerate38,1247
+def main(cont):main45,1497
+
+eat.py,64
+def main(own, eat, item, fish, health, max_health):main19,755
+
+AI_motion.py,587
+def turn_fast(run):turn_fast20,756
+def turn_left_right(left, right, speed):turn_left_right26,839
+def turn(own, run, left, right):turn34,984
+def aim_move_left_right(left, right, speed):aim_move_left_right38,1122
+def aim_move_forward_back(forward, back, speed):aim_move_forward_back46,1271
+def aim_move_straight(straight):aim_move_straight54,1426
+def aim_move(own, forward, back, left, right):aim_move60,1526
+def move_fast(run):move_fast69,1915
+def move(own, run):move75,2004
+def stop(own):stop78,2081
+def main(cont, own, forward, back, left, right, aim):main83,2218
+
+armature.py,521
+MOVE_LOWER_AIM = "lower_aim"MOVE_LOWER_AIM21,778
+ACTION_UPPER_AIM = "upper_aim"ACTION_UPPER_AIM22,807
+ACTION_UPPER_AIM_ARMED = "upper_aim_armed"ACTION_UPPER_AIM_ARMED23,838
+def aim_move(own, forward, back, left, right, started_aim, current_frame):aim_move25,882
+def move(own, parent, moving, started_aim, current_frame):move111,3832
+def action_attack(own, parent, fall, action_name, upper_current_frame, hit, hit_released):action_attack136,4717
+def action(cont):action181,6649
+def main(cont):main190,7004
+
+AI_brain.py,284
+logic = common.logiclogic22,847
+scene = logic.getCurrentScene()scene23,868
+def attacked_state(cont, own, brain, armature, front_sensor, attacker):attacked_state25,901
+def normal_state(cont, own, brain, armature, front_sensor):normal_state89,3097
+def main(cont):main116,3782
+
+player_motion.py,307
+def aim_move(own, forward, back, left, right):aim_move21,778
+def normal_move(own, run_fast, run, jump):normal_move49,1388
+def stop(own):stop66,1866
+def move(cont, forward, back, left, right, run_fast, jump):move71,1987
+def main(cont, own, forward, back, left, right, jump, aim, fall):main102,2789
+
+player_init.py,161
+scene = logic.getCurrentScene()scene22,792
+DEFAULT_NUM_ITEM = 20DEFAULT_NUM_ITEM24,825
+DEFAULT_HEALTH = 90DEFAULT_HEALTH25,847
+def main(cont):main27,868
+
+AI_player_track.py,338
+DIST_LOC_MAX = 270DIST_LOC_MAX21,778
+DIST_LOC_MIN = 100DIST_LOC_MIN22,797
+DIST_LOC_MAX_DEATH = 240DIST_LOC_MAX_DEATH24,817
+DIST_LOC_MIN_DEATH = 40DIST_LOC_MIN_DEATH25,842
+DIST_LOC_CAM = 0DIST_LOC_CAM27,867
+DIST_LOC_CAM_DEATH = 0DIST_LOC_CAM_DEATH28,884
+scene = logic.getCurrentScene()scene30,908
+def main(cont):main32,941
+
+death.py,98
+logic = collect.logiclogic21,784
+scene = collect.scenescene22,806
+def main(cont):main24,829
+
+common.py,1093
+AI_MAX_DISTANCE = 100AI_MAX_DISTANCE23,794
+AI_CLOSE_DISTANCE = 20AI_CLOSE_DISTANCE24,816
+AI_MAX_COUNT = 15AI_MAX_COUNT25,839
+AI_CLOSE_COUNT = 2AI_CLOSE_COUNT26,857
+AI_SPAWN_MAX_DISTANCE = 100AI_SPAWN_MAX_DISTANCE27,876
+AI_SPAWN_MIN_DISTANCE = 50AI_SPAWN_MIN_DISTANCE28,904
+TERRAIN_GROUP_MAX_DISTANCE = 4000TERRAIN_GROUP_MAX_DISTANCE31,941
+TERRAIN_CHILD_GROUP_MAX_DISTANCE = 2000TERRAIN_CHILD_GROUP_MAX_DISTANCE32,975
+TERRAIN_CHILD_CHILD_GROUP_MAX_DISTANCE = 1500TERRAIN_CHILD_CHILD_GROUP_MAX_DISTANCE33,1015
+TERRAIN_MAX_DISTANCE = 1000TERRAIN_MAX_DISTANCE34,1061
+TERRAIN_PHYSICS_MAX_DISTANCE = 500TERRAIN_PHYSICS_MAX_DISTANCE35,1089
+TERRAIN_BORDER_X = 2319TERRAIN_BORDER_X36,1124
+TERRAIN_BORDER_Y = 3487TERRAIN_BORDER_Y37,1148
+DANGER_SPEED = 60DANGER_SPEED40,1180
+HIGH_DANGER_SPEED = 70HIGH_DANGER_SPEED41,1198
+FATAL_SPEED = 90FATAL_SPEED42,1221
+DAMAGE_RATE = 0.05DAMAGE_RATE43,1238
+HIGH_DAMAGE_RATE = 0.15HIGH_DAMAGE_RATE44,1257
+RIGID_SPEED = 1RIGID_SPEED45,1281
+scene = logic.getCurrentScene()scene47,1298
+def getDistance(vector):getDistance49,1331
+
+cam_col.py,70
+def check_ray(own, ray):check_ray19,755
+def main(cont):main27,979
+
+cam_aim.py,28
+def main(cont):main21,786
+
+attack.py,275
+scene = logic.getCurrentScene()scene23,817
+def shoot_setup(own, parent, scene, name, name_inventory, mass):shoot_setup25,850
+def target_aim(cont):target_aim34,1185
+def AI_target_aim(cont):AI_target_aim44,1665
+def shoot(cont):shoot55,2097
+def hit(cont):hit72,2912

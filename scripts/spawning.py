@@ -66,7 +66,7 @@ def spawn_AI(own, terrain, AI_count, close_AI):
         dist_cam = terrain.getDistanceTo(own.parent.children["camera_track"].children["camera_track2"].children["cam_dir2"].children["cam_dir"].children["cam_pos"])
         if common.AI_SPAWN_MIN_DISTANCE < dist_player < common.AI_SPAWN_MAX_DISTANCE and dist_player > dist_cam:
             terrain_spawner.worldPosition = terrain.worldPosition
-            terrain_spawner.worldPosition[2] += 5
+            terrain_spawner.worldPosition[2] += 3
             new_AI = scene.addObject("AI_penguin", terrain_spawner, 0).groupMembers["AI_Cube"]
             logic.globalDict["AI_list"].append(id(new_AI))
             return [AI_count + 1, close_AI + 1]

@@ -22,8 +22,8 @@ from random import randint
 def main(cont):
     own = cont.owner
     brain = own["brain"] = randint(0,2)
-    if brain == 0:
-        vec = own.worldPosition - logic.getCurrentScene().objects["Cube"].worldPosition
+    vec = own.worldPosition - logic.getCurrentScene().objects["Cube"].worldPosition
+    if randint(0, 1) == 1:
         own.alignAxisToVect([vec.x, vec.y, 0], 0, 1)#point to player
 
     else:
