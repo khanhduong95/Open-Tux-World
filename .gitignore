@@ -1,2 +1,6 @@
-__pycache__
-*.pyc
+2.*
+game
+items.blend
+penguin.blend
+terrain.blend
+*.blend1
