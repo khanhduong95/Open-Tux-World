@@ -26,9 +26,15 @@ DEFAULT_HEALTH = 90
 
 def main(cont):
     own = cont.owner
-    logic.globalDict["player_id"] = id(own)
-    logic.globalDict["terrain_list"] = pickle.load(open("terrain_loc_rot.p", "rb"))[1]
-    logic.globalDict["AI_list"] = []
+
+    own_id = id(own)
+    try:
+        logic.globalDict["player_list"].append(own_id)
+    except:
+        logic.globalDict["terrain_list"] = pickle.load(open("terrain_loc_rot.p", "rb"))[1]
+        logic.globalDict["player_list"] = [own_id]        
+        logic.globalDict["AI_list"] = []
+
     own['stamina'] = own['max_stamina']
     own["item"] = 0
     own["death"] = False
