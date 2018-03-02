@@ -22,11 +22,9 @@ from random import randint
 def main(cont):
     own = cont.owner
     brain = own["brain"] = randint(0,2)
-    if brain == 0:
-        vec = own.worldPosition - logic.getCurrentScene().objects["Cube"].worldPosition
-        own.alignAxisToVect([vec.x, vec.y, 0], 0, 1)#point to player
-
-    else:
+    logic.globalDict["AI_list"].append(id(own))
+    
+    if brain != 0:
         snow_ice = randint(0,3)
         if snow_ice == 1:
             own["snow"] = 30

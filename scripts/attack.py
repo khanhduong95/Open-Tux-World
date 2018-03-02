@@ -77,3 +77,8 @@ def hit(cont):
         hit["owner_ID"] = id(parent)
         hit.setLinearVelocity([-45, 0, 0], True)
         parent["hit_released"] = False
+
+def check_clear(cont):
+    ray = cont.sensors["shoot_ray"]
+    own = cont.owner
+    own["clear"] = ray.positive and id(ray.hitObject) == own.parent["attacker_ID"]

@@ -26,29 +26,25 @@ def gravity(cont):
     v = own["v_z"]
     if v > 0:
         v = 0
-        own.applyForce([0,0,-100], False)
+        own.applyForce([0, 0, -100], False)
     elif v >= -150:
         v -= 0.5
-        own.applyForce([0,0,100*v], False)
+        own.applyForce([0, 0, 100 * v], False)
     own["v_z"] = v
 
 def main(cont):
     own = cont.owner
     own["hit"] = False
     own.enableRigidBody()
-    v = Vector((own["v_x"],own["v_y"],own["v_z"]))
+    v = Vector((own["v_x"], own["v_y"], own["v_z"]))
     dv = Vector(own.worldLinearVelocity) - v
     v += dv
     speed = common.getDistance([dv.x, dv.y, dv.z])
     if speed > common.DANGER_SPEED:
         if speed > common.FATAL_SPEED:
             own["health"] = 0
-        elif speed > common.HIGH_DANGER_SPEED:
-            own["health"] -= speed * common.HIGH_DAMAGE_RATE
         else:
-            own["health"] -= speed * common.DAMAGE_RATE
-        #print(own)
-        #print(own["health"])
+            own["health"] -= speed * (common.HIGH_DAMAGE_RATE if speed > common.HIGH_DANGER_SPEED else common.DAMAGE_RATE)
         own.state = logic.KX_STATE3
 
     own["v_x"] = v.x

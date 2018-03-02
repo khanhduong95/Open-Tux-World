@@ -26,8 +26,8 @@ def get_scene(string):
 
 def amount(cont):
     own = cont.owner
-    try:
-        cube = get_scene("Scene").objects.from_id(logic.globalDict.get("player_id"))
+    try:        
+        cube = get_scene("Scene").active_camera.parent.parent.parent.parent.parent.parent
         snow = cube["snow"]
         ice = cube["ice"]
         fish = cube["fish"]
@@ -47,7 +47,7 @@ def item(cont):
     item = own["item"]
     scene = logic.getCurrentScene()
     try:
-        new = get_scene("Scene").objects.from_id(logic.globalDict.get("player_id"))["item"]
+        new = get_scene("Scene").active_camera.parent.parent.parent.parent.parent.parent["item"]
         if item != new:
             if item == 1:
                 own.children["snow_ball"].endObject()
@@ -76,7 +76,7 @@ def item(cont):
 def health(cont):
     own = cont.owner
     try:
-        health = get_scene("Scene").objects.from_id(logic.globalDict.get("player_id"))["health"]
+        health = get_scene("Scene").active_camera.parent.parent.parent.parent.parent.parent["health"]
         if health <= 0:
             own.worldScale = [0, 0.05, 0.05]
         else:

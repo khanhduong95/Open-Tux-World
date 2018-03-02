@@ -19,85 +19,22 @@
 from bge import logic
 
 def aim_move(own, forward, back, left, right):
-
-    if left:
-        if forward:
-            own.setLinearVelocity([-7, -7, 0], True)
-
-        elif back:
-            own.setLinearVelocity([7, -7, 0], True)
-
-        else:
-            own.setLinearVelocity([0, -10, 0], True)
-
-    elif right:
-        if forward:
-            own.setLinearVelocity([-7, 7, 0], True)
-
-        elif back:
-            own.setLinearVelocity([7, 7, 0], True)
-
-        else:
-            own.setLinearVelocity([0, 10, 0], True)
-
-    elif forward:
-        own.setLinearVelocity([-10, 0, 0], True)
-
-    elif back:
-        own.setLinearVelocity([10, 0, 0], True)
-
-def normal_move(own, run, run_fast, jump):
-    if run_fast:
-        if jump:
-            own.setLinearVelocity([-30, 0, 6], True)
-        else:
-            own.setLinearVelocity([-30, 0, 0], True)
-    elif run:
-        if jump:
-            own.setLinearVelocity([-20, 0, 6], True)
-        else:
-            own.setLinearVelocity([-20, 0, 0], True)
-    else:
-        if jump:
-            own.setLinearVelocity([-10, 0, 6], True)
-        else:
-            own.setLinearVelocity([-10, 0, 0], True)
-
-def stop(own):
-    own.setLinearVelocity([0.00000012, 0, 0])
-    own["moving"] = False
-    own.setLinearVelocity([0, 0, 0])
-
-def act_actuator(cont, name):
-    cont.activate(cont.actuators[name])
-    
-def deact_actuator(cont, name):
-    cont.deactivate(cont.actuators[name])
+    speed = 10 if (left or right) != (forward or back) else (7 if (left or right) and (forward or back) else 0)
+    own.setLinearVelocity([-speed if forward else (speed if back else 0), -speed if left else (speed if right else 0), 0], True)
     
 def move(cont, forward_dir, forward, back, left, right, run, run_fast, jump):
-    act_actuator(cont, "forward_dir")
+    cont.activate(cont.actuators["forward_dir"])
     own = cont.owner
-    if forward:
-        forward_dir.localPosition[0] = -3
-    elif back:
-        forward_dir.localPosition[0] = 3
-    else:
-        forward_dir.localPosition[0] = 0
+    forward_dir.localPosition[0] = -3 if forward else (3 if back else 0)
+    forward_dir.localPosition[1] = -3 if left else (3 if right else 0)
         
-    if left:
-        forward_dir.localPosition[1] = -3
-    elif right:
-        forward_dir.localPosition[1] = 3
-    else:
-        forward_dir.localPosition[1] = 0
-
-    act_actuator(cont, "Mouse")
-    normal_move(own, run, run_fast, jump)
+    cont.activate(cont.actuators["Mouse"])
+    own.setLinearVelocity([-30 if run_fast else (-20 if run else -10), 0, 6 if jump else 0], True)
 
 def main(cont, own, forward, back, left, right, jump, aim, fall):
     forward_dir = own.children["camera_track"].children["forward_dir"]
-    deact_actuator(cont, "Mouse")
-    deact_actuator(cont, "forward_dir")
+    cont.deactivate(cont.actuators["Mouse"])
+    cont.deactivate(cont.actuators["forward_dir"])
     forward_dir.localPosition[0] = -3
     forward_dir.localPosition[1] = 0
 
@@ -123,4 +60,5 @@ def main(cont, own, forward, back, left, right, jump, aim, fall):
             own.setLinearVelocity([0, 0, 6], True)
 
         elif own["moving"]:
-            stop(own)
+            own.setLinearVelocity([0.00000012, 0, 0])
+            own["moving"] = False
