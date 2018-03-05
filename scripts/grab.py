@@ -46,7 +46,7 @@ def main(cont):
     own = cont.owner
     new = own.parent.parent["item"] #new item
     current = own["current"] #current item
-    if own.parent.parent["death"]:
+    if own.parent.parent["health"] < 1:
         change_item(own, 0, current)
         own.state = logic.KX_STATE2
     elif new != current:

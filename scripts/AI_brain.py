@@ -90,7 +90,7 @@ def main(cont):
                 return
 
             attacker_dist = own.getDistanceTo(attacker)
-            if attacker_dist >= 150 or attacker["death"]:
+            if attacker_dist >= 150 or attacker["health"] < 1:
                 own["run"] = own["aim"] = False
                 own["item"] = 0
                 own["normal"] = True

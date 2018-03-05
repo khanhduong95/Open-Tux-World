@@ -44,17 +44,12 @@ def generate(cont, own, item, amount, scene): #generate collectible items
 
 def main(cont):
     own = cont.owner
-
-    try:
-        if own.getDistanceTo(scene.objects["Cube"]) > common.ITEM_MAX_DISTANCE:
-            own.endObject()
-    except:
-        pass
     
     col = cont.sensors["collect"]
     item = own["item"]
     amount = own["amount"]
-    if col.positive and not col.hitObject["death"]:
+
+    if col.positive and col.hitObject["health"] > 0:
         target = col.hitObject
         if item == 1 and target["snow"] < 30:
             if target["snow"] + amount >= 30:
@@ -74,3 +69,12 @@ def main(cont):
             else:
                 target["fish"] += amount
             own.endObject()
+
+    for player_id in logic.globalDict["player_list"]:
+        try:
+            if own.getDistanceTo(scene.objects.from_id(player_id).children["player_loc"]) < common.ITEM_MAX_DISTANCE:
+                return
+        except:
+            continue
+    
+    own.endObject()

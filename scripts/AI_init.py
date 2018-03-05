@@ -35,4 +35,6 @@ def main(cont):
             own["ice"] = 15
 
     own["fish"] = randint(0,10)
+
+    own["health"] = randint(60, 80)
     own.state = logic.KX_STATE2

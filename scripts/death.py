@@ -33,4 +33,3 @@ def main(cont):
     if own["snow"] > 0:
         collect.generate(cont, own, 1, own["snow"], scene)
         own["snow"] = 0
-    own.state = logic.KX_STATE5

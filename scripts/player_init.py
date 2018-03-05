@@ -37,7 +37,6 @@ def main(cont):
 
     own['stamina'] = own['max_stamina']
     own["item"] = 0
-    own["death"] = False
     own["health"] = DEFAULT_HEALTH
     own["snow"] = DEFAULT_NUM_ITEM
     own["ice"] = DEFAULT_NUM_ITEM
