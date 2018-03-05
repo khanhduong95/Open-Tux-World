@@ -51,8 +51,7 @@ def main(cont):
             own["health"] -= speed * common.HIGH_DAMAGE_RATE
         else:
             own["health"] -= speed * common.DAMAGE_RATE
-        #print(own)
-        #print(own["health"])
+            
         own.state = logic.KX_STATE3
 
     own["v_x"] = v.x

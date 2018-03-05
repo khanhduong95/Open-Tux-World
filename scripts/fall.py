@@ -23,14 +23,16 @@ logic = common.logic
 
 def gravity(cont):
     own = cont.owner
-    v = own["v_z"]
-    if v > 0:
-        v = 0
-        own.applyForce([0, 0, -100], False)
-    elif v >= -150:
-        v -= 0.5
-        own.applyForce([0, 0, 100 * v], False)
-    own["v_z"] = v
+    
+    own.applyForce([0, 0, -10 * own.mass], False)
+    # v = own["v_z"]
+    # if v > 0:
+    #     v = 0
+    #     own.applyForce([0, 0, -100], False)
+    # elif v >= -150:
+    #     v -= 0.5
+    #     own.applyForce([0, 0, 100 * v], False)
+    # own["v_z"] = v
 
 def main(cont):
     own = cont.owner

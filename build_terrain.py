@@ -1,16 +1,34 @@
 import bpy
 import bmesh
 import pickle
+import os
+
+ops = bpy.ops
+wm = ops.wm
+
+terrain_names = []
+
+for file in os.listdir(bpy.path.abspath("//") + "terrains"):
+    if file.endswith(".blend"):
+        terrains = []
+        blend = bpy.path.abspath("//") + "terrains/" + file
+        with bpy.data.libraries.load(blend, relative=True) as (data_from, data_to):
+            for name in data_from.objects:
+                if name.startswith("terrain"):
+                    terrains.append({'name': name})
+                    if not name.endswith("_physics"):
+                        terrain_names.append(name)
+                
+            wm.append(directory=blend + "/Object/", files=terrains)
 
 obj_list = []
 objects = bpy.data.objects
-ops = bpy.ops
 context = bpy.context
 scene = context.scene
 logic = ops.logic
 layers = scene.layers
 
-ops.object.mode_set(mode='OBJECT')
+#ops.object.mode_set(mode='OBJECT')
 
 for ob in objects:
     if ob not in obj_list:
@@ -98,7 +116,9 @@ def cut_terrain(obj_name, obj_length, obj_width, obj_suffix):
 
 ops.object.select_all(action='DESELECT')
 
-terrain_list = cut_terrain("terrain", 36, 36, "_physics")
+for terrain_name in terrain_names:
+    terrain_list.extend(cut_terrain(terrain_name, 36, 36, "_physics"))
+
 pickle.dump(terrain_list, open(bpy.path.abspath("//")+"terrain_loc_rot.p", "wb"))
 
 #cut_terrain("terrain", 216, 216, "_physics")
@@ -110,5 +130,5 @@ smooth(sky)
 select_layer(2)
 smooth(house)
 
-ops.wm.save_as_mainfile(filepath=bpy.path.abspath("//")+"terrain.blend")
-ops.wm.quit_blender()
+wm.save_as_mainfile(filepath=bpy.path.abspath("//")+"terrain.blend")
+wm.quit_blender()
