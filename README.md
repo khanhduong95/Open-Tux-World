@@ -46,3 +46,8 @@ See INSTALL file for more details.
     You should have received a copy of the GNU General Public License
     along with Open Tux World.  If not, see <http://www.gnu.org/licenses/>.
 
+# Models & Textures Licenses
+
+- Penguin model (penguin_src.blend) and texture (textures/character/body.png): CC BY-SA (author: Dang Duong)
+- Fish model (items_src.blend) and texture (textures/objects/fish.png): CC BY-SA (author: Dang Duong)
+- Snow texture (textures/envi/snow.jpg): CC BY (author: Simon Murray, source: https://www.brusheezy.com/textures/20856-seamless-snow-ice-textures)

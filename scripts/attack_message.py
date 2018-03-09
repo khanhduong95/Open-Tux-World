@@ -16,25 +16,33 @@
 #    You should have received a copy of the GNU General Public License
 #    along with Open Tux World.  If not, see <http://www.gnu.org/licenses/>.
 #
+from scripts import common
+
 def shoot(cont):
     own = cont.owner
     col = cont.sensors["Collision"]
     if col.positive and id(col.hitObject) != own["owner_ID"]:
-        hitObj = col.hitObject
-        if "penguin" in hitObj:
-            hitObj["health"] -= own.mass*0.001
-            if "AI" in hitObj:
-                hitObj["normal"] = False
-                hitObj["attacker_ID"] = own["owner_ID"]
+        reduce_health(own, col.hitObject)
         own.endObject()
+        
+    else:
+        v = own.worldLinearVelocity
+        hitPos = own.rayCast(own.worldPosition + v, own, common.getDistance(v) / 30, "", 0, 0, 0)
+        hitObj = hitPos[0]
+        if hitObj and id(hitObj) != own["owner_ID"]:
+            hitObj.applyImpulse(hitPos[1], v * own.mass, False)
+            reduce_health(own, hitObj)
+            own.endObject()            
 
 def hit(cont):
     own = cont.owner
     col = cont.sensors["Collision"]
     if col.positive and id(col.hitObject) != own["owner_ID"]:
-        hitObj = col.hitObject
-        if "penguin" in hitObj:
-            hitObj["health"] -= own.mass*0.0001
-            if "AI" in hitObj:
-                hitObj["normal"] = False
-                hitObj["attacker_ID"] = own["owner_ID"]
+        reduce_health(own, col.hitObject)
+
+def reduce_health(own, hitObj):
+    if "penguin" in hitObj:
+        hitObj["health"] -= own.mass*0.01
+        if "AI" in hitObj:
+            hitObj["normal"] = False
+            hitObj["attacker_ID"] = own["owner_ID"]

@@ -28,7 +28,7 @@ def create_image(own, item, scene): #create an image of each collectible item
         string = "ice_cube"
     elif item == 3:
         string = "fish"
-    image = scene.addObject(string,own,0)
+    image = scene.addObject(string, own, 0)
     image.setParent(own,0,1)
     if item == 3:
         image.worldScale = [0.143*2, 0.043*2, 0.065*2]
@@ -36,7 +36,7 @@ def create_image(own, item, scene): #create an image of each collectible item
         image.worldScale = [0.197, 0.197, 0.197]
 
 def generate(cont, own, item, amount, scene): #generate collectible items
-    new = scene.addObject("collect_item",own,0)
+    new = scene.addObject("collect_item", own, common.ITEM_COLLECT_EXPIRE)
     new.worldPosition = own.worldPosition
     new["item"] = item
     new["amount"] = amount
@@ -51,21 +51,21 @@ def main(cont):
 
     if col.positive and col.hitObject["health"] > 0:
         target = col.hitObject
-        if item == 1 and target["snow"] < 30:
-            if target["snow"] + amount >= 30:
-                target["snow"] = 30
+        if item == 1 and target["snow"] < common.ITEM_MAX_COUNT:
+            if target["snow"] + amount >= common.ITEM_MAX_COUNT:
+                target["snow"] = common.ITEM_MAX_COUNT
             else:
                 target["snow"] += amount
             own.endObject()
-        elif item == 2 and target["ice"] < 30:
-            if target["ice"] + amount >= 30:
-                target["ice"] = 30
+        elif item == 2 and target["ice"] < common.ITEM_MAX_COUNT:
+            if target["ice"] + amount >= common.ITEM_MAX_COUNT:
+                target["ice"] = common.ITEM_MAX_COUNT
             else:
                 target["ice"] += amount
             own.endObject()
-        elif item == 3 and target["fish"] < 30:
-            if target["fish"] + amount >= 30:
-                target["fish"] = 30
+        elif item == 3 and target["fish"] < common.ITEM_MAX_COUNT:
+            if target["fish"] + amount >= common.ITEM_MAX_COUNT:
+                target["fish"] = common.ITEM_MAX_COUNT
             else:
                 target["fish"] += amount
             own.endObject()
