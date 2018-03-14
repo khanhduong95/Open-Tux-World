@@ -48,6 +48,4 @@ See INSTALL file for more details.
 
 # Models & Textures Licenses
 
-- Penguin model (penguin_src.blend) and texture (textures/character/body.png): CC BY-SA (author: Dang Duong)
-- Fish model (items_src.blend) and texture (textures/objects/fish.png): CC BY-SA (author: Dang Duong)
-- Snow texture (textures/envi/snow.jpg): CC BY (author: Simon Murray, source: https://www.brusheezy.com/textures/20856-seamless-snow-ice-textures)
+  Unless otherwise stated, all artworks (models, textures, .etc) are released under the terms of the Creative Commons Attribution 4.0 license

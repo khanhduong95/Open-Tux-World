@@ -42,16 +42,24 @@ def main(cont):
     own = cont.owner
     own_pos = own.worldPosition
     for terrain in logic.globalDict["terrain_list"]:
-        if close_distance(own_pos, terrain[0], common.TERRAIN_GROUP_MAX_DISTANCE):
-            for terrain_child in terrain[1]:
-                if close_distance(own_pos, terrain_child[0], common.TERRAIN_CHILD_GROUP_MAX_DISTANCE):
-                    for terrain_child_child in terrain_child[1]:
-                        if close_distance(own_pos, terrain_child_child[0], common.TERRAIN_CHILD_CHILD_GROUP_MAX_DISTANCE):
-                            for terrain_child_child_child in terrain_child_child[1]:
-                                index_child_child_child_pos = terrain_child_child_child[0]
-                                terrain_name = terrain_child_child_child[1]
+        if close_distance(own_pos, terrain["location"], common.TERRAIN_GROUP_MAX_DISTANCE):
+            for terrain_child in terrain["children"]:
+                if close_distance(own_pos, terrain_child["location"], common.TERRAIN_CHILD_GROUP_MAX_DISTANCE):
+                    for terrain_child_child in terrain_child["children"]:
+                        if close_distance(own_pos, terrain_child_child["location"], common.TERRAIN_CHILD_CHILD_GROUP_MAX_DISTANCE):
+                            for terrain_child_child_child in terrain_child_child["children"]:
+                                index_child_child_child_pos = terrain_child_child_child["location"]
+                                terrain_name = terrain_child_child_child["name"]
                                 try:
                                     terrain_physics = scene.objects[terrain_name]
+                                    for house_name in terrain_child_child_child["houses"]:
+                                        house = scene.objects[house_name]
+                                        try:
+                                            house_physics = terrain_physics.children["house_physics"]
+                                        except:
+                                            house_physics = scene.addObject("house_physics", house, 0)
+                                            house_physics.setParent(terrain_physics, 0, 0)                                            
+                                            
                                     spawn_AI(own, terrain_physics)
 
                                 except:
