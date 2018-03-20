@@ -39,5 +39,7 @@ def main(cont):
         except:
             continue
 
-    logic.globalDict["AI_list"].remove(id(parent))
+    parent_id = id(parent)
+    logic.globalDict["AI_list"].remove(parent_id)
+    print("AI " + str(parent_id) + " removed")
     parent.endObject()

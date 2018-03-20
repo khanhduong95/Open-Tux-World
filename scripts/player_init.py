@@ -17,7 +17,7 @@
 #    along with Open Tux World.  If not, see <http://www.gnu.org/licenses/>.
 #
 from bge import logic
-import pickle
+import json
 
 scene = logic.getCurrentScene()
 
@@ -31,7 +31,11 @@ def main(cont):
     try:
         logic.globalDict["player_list"].append(own_id)
     except:
-        logic.globalDict["terrain_list"] = pickle.load(open("terrain_loc_rot.p", "rb"))
+        with open("terrains_dict.json", "r") as json_file:
+            logic.globalDict["terrains_dict"] = json.load(json_file)
+            
+        logic.globalDict["terrain_physics_list"] = {}        
+        logic.globalDict["terrain_images_list"] = {}        
         logic.globalDict["player_list"] = [own_id]        
         logic.globalDict["AI_list"] = []
 

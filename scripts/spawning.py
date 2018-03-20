@@ -33,41 +33,70 @@ def spawn_AI(own, terrain):
         dist_cam = terrain.getDistanceTo(own.parent.children["camera_track"].children["camera_track2"].children["cam_dir2"].children["cam_dir"].children["cam_pos"])
         if common.AI_SPAWN_MIN_DISTANCE < dist_player < common.AI_SPAWN_MAX_DISTANCE and dist_player > dist_cam:
             terrain_spawner.worldPosition = terrain.worldPosition
-            terrain_spawner.worldPosition[2] += 5
+            terrain_spawner.worldPosition[2] += 3
             AI = scene.addObject("AI_penguin", terrain_spawner, 0).groupMembers["AI_Cube"]
+            print("AI " + str(id(AI)) + " spawned")
             vec = AI.worldPosition - own.worldPosition
             AI.alignAxisToVect([vec.x, vec.y, 0], 0, 1)#point to player
-        
+
+def check_near_terrains(own, own_id, own_pos, physics_or_image, min_distance):
+    x = str(own_pos[0] // min_distance)
+    y = str(own_pos[1] // min_distance)
+    key = x+"_"+y
+
+    if physics_or_image == "physics":
+        z = str(own_pos[2] // min_distance)
+        key += "_"+z
+    
+    global_dict = logic.globalDict
+
+    terrain_list_name = "terrain_" + physics_or_image + "_list"
+    for terrain in global_dict["terrains_dict"][physics_or_image][key]:
+        terrain_name = terrain["name"]
+        try:
+            terrain_info = global_dict[terrain_list_name][terrain_name]
+        except:
+            terrain_info = global_dict[terrain_list_name][terrain_name] = {}
+
+        terrain_pos = terrain["location"]
+        terrain_x = str(terrain_pos[0] // min_distance)
+        terrain_y = str(terrain_pos[1] // min_distance)
+        terrain_key = terrain_x + "_" + terrain_y
+
+        if physics_or_image == "physics":
+            terrain_z = str(terrain_pos[2] // min_distance)
+            terrain_key += "_" + terrain_z
+            
+        try:
+            if own_id not in terrain_info[terrain_key]["players"]:
+                global_dict[terrain_list_name][terrain_name][terrain_key]["players"].append(own_id)
+
+            spawn_AI(own, scene.objects.from_id(terrain_info[terrain_key]["id"]))
+            
+        except:
+            terrain_spawner.worldPosition = terrain_pos
+            new_terrain = scene.addObject(terrain_name, terrain_spawner, 0)
+            terrain_loc = scene.addObject("terrain_loc", terrain_spawner, 0)            
+            terrain_loc.setParent(new_terrain, 0, 0)
+            terrain_id = id(new_terrain)
+            global_dict[terrain_list_name][terrain_name][terrain_key] = {"players": [own_id], "id": terrain_id}
+            print("Terrain " + physics_or_image + " " + terrain_name + " " + str(terrain_id) + " added")
+
+            if physics_or_image == "images":
+                continue
+            
+            try:
+                house_physics = new_terrain.children["house_physics"]
+            except:
+                for house in terrain["houses"]:
+                    terrain_spawner.worldPosition = house["location"]
+                    house_physics = scene.addObject("house_physics", terrain_spawner, 0)
+                    house_physics.applyRotation(house["rotation"], False)
+                    house_physics.setParent(new_terrain, 0, 0)
+            
 def main(cont):
     own = cont.owner
+    own_id = id(own)
     own_pos = own.worldPosition
-    for terrain in logic.globalDict["terrain_list"]:
-        if close_distance(own_pos, terrain["location"], common.TERRAIN_GROUP_MAX_DISTANCE):
-            for terrain_child in terrain["children"]:
-                if close_distance(own_pos, terrain_child["location"], common.TERRAIN_CHILD_GROUP_MAX_DISTANCE):
-                    for terrain_child_child in terrain_child["children"]:
-                        if close_distance(own_pos, terrain_child_child["location"], common.TERRAIN_CHILD_CHILD_GROUP_MAX_DISTANCE):
-                            for terrain_child_child_child in terrain_child_child["children"]:
-                                index_child_child_child_pos = terrain_child_child_child["location"]
-                                terrain_name = terrain_child_child_child["name"]
-                                try:
-                                    terrain_physics = scene.objects[terrain_name]
-                                    for house_name in terrain_child_child_child["houses"]:
-                                        house = scene.objects[house_name]
-                                        try:
-                                            house_physics = terrain_physics.children["house_physics"]
-                                        except:
-                                            house_physics = scene.addObject("house_physics", house, 0)
-                                            house_physics.setParent(terrain_physics, 0, 0)                                            
-                                            
-                                    spawn_AI(own, terrain_physics)
-
-                                except:
-                                    if close_distance(own_pos, index_child_child_child_pos, common.TERRAIN_PHYSICS_MAX_DISTANCE):
-                                        terrain_spawner.worldPosition = index_child_child_child_pos
-                                        scene.addObject(terrain_name, terrain_spawner, 0)
-
-
-
-
-
+    check_near_terrains(own, own_id, own_pos, "images", 500)
+    check_near_terrains(own, own_id, own_pos, "physics", 100)

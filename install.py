@@ -8,7 +8,7 @@ context = bpy.context
 scene = context.scene
 layers = scene.layers
 
-#ops.object.make_local(type="ALL")
+# ops.object.make_local(type="ALL")
 # bpy.data.scenes["Scene"].game_settings.show_physics_visualization = True
 
 def select_layer(index):
@@ -23,17 +23,15 @@ with bpy.data.libraries.load(blend, relative=True) as (data_from, data_to):
     terrains = []
     terrain_physics = []
     for name in data_from.objects:
-        if name.startswith("terrain"):
-            if name.endswith("_physics"):
+        if name.startswith("terrain") and name != "terrain_loc":
+            if name.endswith("_physics_group"):
                 terrain_physics.append({'name': name})
-            else:
+            elif not name.endswith("_physics"):
                 terrains.append({'name': name})
         elif name.startswith("house_spawner"):
             terrains.append({'name': name})
-
-    select_layer(0)
-    wm.link(directory=blend + "/Object/", files=terrains)
     select_layer(5)
+    wm.link(directory=blend + "/Object/", files=terrains)
     wm.link(directory=blend + "/Object/", files=terrain_physics)
     select_layer(0)
 
@@ -47,4 +45,5 @@ else:
             
 wm.addon_enable(module="game_engine_save_as_runtime")
 wm.save_as_runtime(filepath=bpy.path.abspath("//")+"otw"+exe_extension)
+# wm.save_as_mainfile(filepath=bpy.path.abspath("//")+"otw.blend")
 wm.quit_blender()

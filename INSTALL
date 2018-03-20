@@ -9,4 +9,4 @@ The following instructions apply for building from source only. For binary versi
  <path/to/Blender/executable> -b items_src.blend -P build_item.py
  <path/to/Blender/executable> -b penguin_src.blend -P build_penguin.py
  <path/to/Blender/executable> -b game.blend -P install.py
-- Now you can run the game by opening the file named "game" / "game.exe" / "game.app" (which depends on the OS)
+- Now you can run the game by opening the file named "otw" / "otw.exe" / "otw.app" (which depends on the OS)

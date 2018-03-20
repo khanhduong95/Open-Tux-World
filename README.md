@@ -22,6 +22,7 @@ Shift + W/A/S/D - run
 Mouse Wheel Up/Down (or Q) - switch items
 E (while holding fish) - eat
 R (when dead) - respawn
+P - pause/resume game
 
 Esc - exit game
 
@@ -48,4 +49,4 @@ See INSTALL file for more details.
 
 # Models & Textures Licenses
 
-  Unless otherwise stated, all artworks (models, textures, .etc) are released under the terms of the Creative Commons Attribution 4.0 license
+  Unless otherwise stated, all artworks (models, textures, etc.) are released under the terms of the Creative Commons Attribution 4.0 license
