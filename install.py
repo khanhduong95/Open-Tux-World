@@ -10,6 +10,7 @@ layers = scene.layers
 
 # ops.object.make_local(type="ALL")
 # bpy.data.scenes["Scene"].game_settings.show_physics_visualization = True
+bpy.data.scenes["Scene"].game_settings.show_fullscreen = True
 
 def select_layer(index):
     ops.object.select_all(action="DESELECT")
