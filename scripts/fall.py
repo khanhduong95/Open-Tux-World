@@ -47,7 +47,7 @@ def main(cont):
             own["health"] -= speed * (common.HIGH_DAMAGE_RATE if speed > common.HIGH_DANGER_SPEED else common.DAMAGE_RATE)
         own.state = logic.KX_STATE3
 
-    elif speed > common.RIGID_SPEED and (cont.sensors["Collision.001"].positive or not own["fall"]):
+    elif speed < common.RIGID_SPEED and (cont.sensors["Collision.001"].positive or not own["fall"]):
         own.disableRigidBody()
         own.worldOrientation[2] = [0.0,0.0,1.0]
         own.state = logic.KX_STATE2

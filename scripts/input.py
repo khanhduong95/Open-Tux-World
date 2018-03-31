@@ -35,14 +35,12 @@ def cam(cont):
             own["pause"] = True
 
 def death_main(cont):
-    if keyboard.events[events.RKEY] == JUST_ACTIVATED:
-        own = cont.owner
-        # own.state = logic.KX_STATE1
-        # armature = own.children["Armature"]
-        # armature.state = logic.KX_STATE1
-        # armature.children["grab_point"].state = logic.KX_STATE1
+    own = cont.owner
+    if own["player"] and keyboard.events[events.RKEY] == JUST_ACTIVATED:
         cont.activate(cont.actuators["Message"])
-        cont.activate(cont.actuators["Delete"])
+        own["player"] = False
+        global_dict["player_list"].remove(id(own))        
+        own.children["camera_track"].endObject()
 
 def main(cont):
     own = cont.owner

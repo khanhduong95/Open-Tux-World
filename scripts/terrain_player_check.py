@@ -20,14 +20,15 @@ from scripts import common
 
 logic = common.logic
 scene = common.scene
+global_dict = logic.globalDict
 
 def main(cont):
     own = cont.owner
-    parent = own.parent
-    parent_id = id(parent)
-    parent_name = parent.name
-    physics_or_image = "physics" if parent_name.endswith("_physics_group") else "images"
-    min_dist = 100 if physics_or_image == "physics" else 500
+    own_id = id(own)
+    own_name = own["terrain_name"]
+    own_is_physics = own["physics"]
+    physics_or_image = "physics" if own_is_physics else "image"
+    min_dist = common.TERRAIN_PHYSICS_MAX_DISTANCE if own_is_physics else common.TERRAIN_IMAGE_MAX_DISTANCE
     own_pos = own.worldPosition
     terrain_list_name = "terrain_" + physics_or_image + "_list"
     
@@ -35,20 +36,11 @@ def main(cont):
     y = str(own_pos[1] // min_dist)
     key = x+"_"+y
 
-    if physics_or_image == "physics":
+    if own_is_physics:
         z = str(own_pos[2] // min_dist)
         key += "_"+z
         
-    global_dict = logic.globalDict
-    # if key not in global_dict[terrain_list_name][parent_name]:
-    #     print("STOP " + parent_name +" key "+key)        
-    #     print(global_dict[terrain_list_name][parent_name])
-    #     return
-    # if "players" not in global_dict[terrain_list_name][parent_name][key]:
-    #     print("STOP players")
-    #     print(global_dict[terrain_list_name][parent_name][key])
-    #     return
-    for player_id in global_dict[terrain_list_name][parent_name][key]["players"]:
+    for player_id in global_dict[terrain_list_name][own_name][key]["players"]:
         try:
             player = scene.objects.from_id(player_id)
             player_pos = player.worldPosition
@@ -56,16 +48,16 @@ def main(cont):
             player_y = str(player_pos[1] // min_dist)
             player_key = player_x + "_" + player_y
             
-            if physics_or_image == "physics":
+            if own_is_physics:
                 player_z = str(player_pos[2] // min_dist)
                 player_key += "_" + player_z
 
-            if global_dict["terrains_dict"][physics_or_image][player_key]["location"] != parent.worldPosition:
-                global_dict[terrain_list_name][parent_name][key]["players"].remove(player_id)
+            if global_dict["terrain_dict"][physics_or_image][player_key]["location"] != own.worldPosition:
+                global_dict[terrain_list_name][own_name][key]["players"].remove(player_id)
         except:
             continue
 
-    if not global_dict[terrain_list_name][parent_name][key]["players"]:
-        del global_dict[terrain_list_name][parent_name][key]
-        print("Terrain " + physics_or_image + " " + parent_name + " " + str(parent_id) + " removed")
-        parent.endObject()
+    if not global_dict[terrain_list_name][own_name][key]["players"]:
+        del global_dict[terrain_list_name][own_name][key]
+        own.endObject()
+        print("Terrain " + physics_or_image + " " + own_name + " " + str(own_id) + " removed")

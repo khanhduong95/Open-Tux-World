@@ -93,7 +93,7 @@ def main(cont):
                 return
 
             attacker_dist = own.getDistanceTo(attacker)
-            if attacker_dist >= common.AI_ATTACK_MAX_DISTANCE or attacker_health < 1:
+            if attacker_health < 1:
                 own["run"] = own["aim"] = False
                 own["item"] = 0
                 own["normal"] = True
