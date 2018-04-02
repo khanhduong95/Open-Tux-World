@@ -1,8 +1,7 @@
 2.*
 game
-items.blend
-penguin.blend
-terrain.blend
+otw
 TAGS
 *.blend1
 *.p
+*.json

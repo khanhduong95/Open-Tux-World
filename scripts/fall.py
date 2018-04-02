@@ -21,25 +21,25 @@ from mathutils import Vector
 
 logic = common.logic
 
-def gravity(cont):
-    own = cont.owner
-    v = own["v_z"]
-    if v > 0:
-        v = 0
-        own.applyForce([0, 0, -100], False)
-    elif v >= -150:
-        v -= 0.5
-        own.applyForce([0, 0, 100 * v], False)
-    own["v_z"] = v
-
 def main(cont):
     own = cont.owner
+    own.applyForce([0, 0, -10 * own.mass], False)
+
+    if own["health"] < 1:
+        return
+    
     own["hit"] = False
     own.enableRigidBody()
+    
     v = Vector((own["v_x"], own["v_y"], own["v_z"]))
     dv = Vector(own.worldLinearVelocity) - v
     v += dv
     speed = common.getDistance([dv.x, dv.y, dv.z])
+    
+    own["v_x"] = v.x
+    own["v_y"] = v.y
+    own["v_z"] = v.z
+
     if speed > common.DANGER_SPEED:
         if speed > common.FATAL_SPEED:
             own["health"] = 0
@@ -47,15 +47,7 @@ def main(cont):
             own["health"] -= speed * (common.HIGH_DAMAGE_RATE if speed > common.HIGH_DANGER_SPEED else common.DAMAGE_RATE)
         own.state = logic.KX_STATE3
 
-    own["v_x"] = v.x
-    own["v_y"] = v.y
-    own["v_z"] = v.z
-
-    if own["health"] <= 0:
-        own["hit_released"] = False
-        own["death"] = True
-        own.state = logic.KX_STATE4
-    elif speed > common.RIGID_SPEED and (cont.sensors["Collision.001"].positive or not own["fall"]):
+    elif speed < common.RIGID_SPEED and (cont.sensors["Collision.001"].positive or not own["fall"]):
         own.disableRigidBody()
         own.worldOrientation[2] = [0.0,0.0,1.0]
         own.state = logic.KX_STATE2

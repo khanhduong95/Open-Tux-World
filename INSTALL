@@ -4,9 +4,15 @@ The following instructions apply for building from source only. For binary versi
 
 - You need to install Blender first ( https://www.blender.org/ )
 - Open the command window and cd to the game main directory (which contains .blend files)
-- Run the following commands in the right order:
- <path/to/Blender/executable> -b terrain_src.blend -P build_terrain.py
- <path/to/Blender/executable> -b items_src.blend -P build_item.py
- <path/to/Blender/executable> -b penguin_src.blend -P build_penguin.py
- <path/to/Blender/executable> -b game.blend -P install.py
-- Now you can run the game by opening the file named "game" / "game.exe" / "game.app" (which depends on the OS)
+- Run the following command:
+ <path/to/Blender/executable> -b otw.blend -P install.py
+
+* For developers:
+- If you want to make modifications to blend files, you should choose *_src.blend files to edit and run the following commands:
+ <path/to/Blender/executable> -b terrain_src.blend -P build_terrain.py (for terrain_src.blend)
+ <path/to/Blender/executable> -b items_src.blend -P build_item.py (for items_src.blend)
+ <path/to/Blender/executable> -b penguin_src.blend -P build_penguin.py (for penguin_src.blend, note that this file contains models from items.blend)
+- To build levels, run the following command for each:
+ <path/to/Blender/executable> -b levels/<folder>/terrain_data_src.blend -P levels/cut_terrain.py
+
+- Now you can run the game by opening the file named "otw" / "otw.exe" / "otw.app" (which depends on the OS)

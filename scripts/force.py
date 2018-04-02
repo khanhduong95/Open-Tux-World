@@ -47,19 +47,10 @@ def main(cont):
     if speed > common.DANGER_SPEED:
         if speed > common.FATAL_SPEED:
             own["health"] = 0
-        elif speed > common.HIGH_DANGER_SPEED:
-            own["health"] -= speed * common.HIGH_DAMAGE_RATE
         else:
-            own["health"] -= speed * common.DAMAGE_RATE
-        #print(own)
-        #print(own["health"])
+            own["health"] -= speed * (common.HIGH_DAMAGE_RATE if speed > common.HIGH_DANGER_SPEED else common.DAMAGE_RATE)
         own.state = logic.KX_STATE3
-
+        
     own["v_x"] = v.x
     own["v_y"] = v.y
     own["v_z"] = v.z
-
-    if own["health"] <= 0:
-        own["hit_released"] = False
-        own["death"] = True
-        own.state = logic.KX_STATE4

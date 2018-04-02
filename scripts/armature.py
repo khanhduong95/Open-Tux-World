@@ -189,7 +189,7 @@ def action_attack(own, parent, fall, action_name, upper_current_frame, hit, hit_
 def action(cont):
     own = cont.owner
     parent = own.parent
-    if parent["death"]:
+    if parent["health"] < 1:
         own.state = logic.KX_STATE2
     else:
         action_name = ACTION_UPPER_AIM_ARMED if parent["item"] != 0 else ACTION_UPPER_AIM
@@ -213,8 +213,5 @@ def main(cont):
         if own["aim"]:
             aim_move(own, forward, back, left, right, started_aim, current_frame)
         else:
-            if "player" in parent:
-                moving = forward or back or left or right
-            else:
-                moving = forward
+            moving = forward or back or left or right
             move(own, parent, moving, started_aim, current_frame)

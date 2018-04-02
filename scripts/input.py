@@ -35,14 +35,12 @@ def cam(cont):
             own["pause"] = True
 
 def death_main(cont):
-    if keyboard.events[events.RKEY] == JUST_ACTIVATED:
-        own = cont.owner
-        own.state = logic.KX_STATE1
-        armature = own.children["Armature"]
-        armature.state = logic.KX_STATE1
-        armature.children["grab_point"].state = logic.KX_STATE1
-        #cont.activate(cont.actuators["Message"])
-        #cont.activate(cont.actuators["Delete"])
+    own = cont.owner
+    if own["player"] and keyboard.events[events.RKEY] == JUST_ACTIVATED:
+        cont.activate(cont.actuators["Message"])
+        own["player"] = False
+        global_dict["player_list"].remove(id(own))        
+        own.children["camera_track"].endObject()
 
 def main(cont):
     own = cont.owner
@@ -54,7 +52,7 @@ def main(cont):
     right = armature["right"] = keyboard.events[events.DKEY] == ACTIVE
     JUMP = keyboard.events[events.SPACEKEY] == ACTIVE
     own["run"] = keyboard.events[events.LEFTSHIFTKEY] == ACTIVE or keyboard.events[events.RIGHTSHIFTKEY] == ACTIVE
-    aim = own.children["shoot_point"]["aim"] = armature["aim"] = mouse.events[events.RIGHTMOUSE] == ACTIVE
+    aim = own.children["shoot_point"].children["shoot_check"]["aim"] = armature["aim"] = mouse.events[events.RIGHTMOUSE] == ACTIVE
     if mouse.events[events.LEFTMOUSE] == JUST_ACTIVATED:
         own["hit"] = True
     previous_item = keyboard.events[events.QKEY] == JUST_ACTIVATED or mouse.events[events.WHEELDOWNMOUSE] == JUST_ACTIVATED

@@ -17,7 +17,7 @@
 #    along with Open Tux World.  If not, see <http://www.gnu.org/licenses/>.
 #
 from bge import logic
-import pickle
+import json
 
 scene = logic.getCurrentScene()
 
@@ -27,20 +27,13 @@ DEFAULT_HEALTH = 90
 def main(cont):
     own = cont.owner
 
-    own_id = id(own)
-    try:
-        logic.globalDict["player_list"].append(own_id)
-    except:
-        logic.globalDict["terrain_list"] = pickle.load(open("terrain_loc_rot.p", "rb"))[1]
-        logic.globalDict["player_list"] = [own_id]        
-        logic.globalDict["AI_list"] = []
+    logic.globalDict["player_list"].append(id(own))
 
     own['stamina'] = own['max_stamina']
     own["item"] = 0
-    own["death"] = False
     own["health"] = DEFAULT_HEALTH
     own["snow"] = DEFAULT_NUM_ITEM
     own["ice"] = DEFAULT_NUM_ITEM
     own["fish"] = DEFAULT_NUM_ITEM
-    scene.active_camera = own.children["camera_track"].children["camera_track2"].children["cam_dir2"].children["cam_dir"].children["cam_holder"].children["Camera"]
+    scene.active_camera = own.groupObject.groupMembers["Camera"]
     own.state = logic.KX_STATE2

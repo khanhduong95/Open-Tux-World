@@ -4,8 +4,7 @@ import platform
 ops = bpy.ops
 wm = ops.wm
 
-ops.object.make_local(type="ALL")
-#bpy.data.scenes["Scene"].game_settings.show_physics_visualization = True
+# bpy.data.scenes["Scene"].game_settings.show_fullscreen = True
 
 os_name = platform.system()
 if os_name == "Windows":
@@ -16,5 +15,5 @@ else:
     exe_extension = ""
             
 wm.addon_enable(module="game_engine_save_as_runtime")
-wm.save_as_runtime(filepath=bpy.path.abspath("//")+"game"+exe_extension)
+wm.save_as_runtime(filepath=bpy.path.abspath("//")+"otw"+exe_extension)
 wm.quit_blender()

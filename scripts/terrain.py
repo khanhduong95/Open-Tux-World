@@ -23,14 +23,15 @@ scene = common.scene
 
 def main(cont):
     own = cont.owner
-    for player_id in logic.globalDict["player_list"]:
-        try:
-            player = scene.objects.from_id(player_id)
-            dist = common.getDistance(own.worldPosition - player.worldPosition)
-            if dist <= common.TERRAIN_PHYSICS_MAX_DISTANCE:
-                return
+    # for player_id in logic.globalDict["player_list"]:
+    #     try:
+    #         player = scene.objects.from_id(player_id)
+    #         dist = common.getDistance(own.worldPosition - player.worldPosition)
+    #         if dist <= common.TERRAIN_PHYSICS_MAX_DISTANCE:
+    #             return
                 
-        except:
-            continue
+    #     except:
+    #         continue
 
-    own.endObject()
+    #     logic.globalDict["active_terrains"].remove(id(own))
+    #     own.endObject()

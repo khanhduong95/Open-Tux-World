@@ -22,6 +22,7 @@ Shift + W/A/S/D - run
 Mouse Wheel Up/Down (or Q) - switch items
 E (while holding fish) - eat
 R (when dead) - respawn
+P - pause/resume game
 
 Esc - exit game
 
@@ -46,3 +47,6 @@ See INSTALL file for more details.
     You should have received a copy of the GNU General Public License
     along with Open Tux World.  If not, see <http://www.gnu.org/licenses/>.
 
+# Models & Textures Licenses
+
+  Unless otherwise stated, all artworks (models, textures, etc.) are released under the terms of the Creative Commons Attribution 4.0 license

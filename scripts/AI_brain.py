@@ -26,11 +26,11 @@ scene = logic.getCurrentScene()
 def attacked_action(cont, own, armature, front_sensor, front_lower_sensor, attacker, attacker_dist, attacker_vec):
     own["item"] = item = switch_item.check_item_previous(own, 2)
     weapons = set([1, 2])
-    aim = (attacker_dist < 5 if item not in weapons else attacker_dist < 15) if own.children["AI_shoot_point"]["clear"] else False
+    aim = (attacker_dist < 5 if item not in weapons else attacker_dist < 15) if own.children["AI_shoot_point"].children["AI_shoot_check"]["clear"] else False
     if aim:
         own.alignAxisToVect([attacker_vec.x, attacker_vec.y, 0], 0, 0.3)
         front_sensor.worldOrientation = front_lower_sensor.worldOrientation = own.worldOrientation
-        own["hit"] = attacker_dist < 2 if item not in weapons else attacker_dist < 15
+        own["hit"] = attacker_dist < 3 if item not in weapons else attacker_dist < 15
 
         if own["hit"]:
 
@@ -83,6 +83,9 @@ def main(cont):
         if not own["normal"]:
             try:
                 attacker = scene.objects.from_id(own["attacker_ID"])
+                attacker_health = attacker["health"]
+                if 'penguin' not in attacker:
+                    print(attacker)
             except:
                 own["run"] = own["aim"] = False
                 own["item"] = 0
@@ -90,16 +93,15 @@ def main(cont):
                 return
 
             attacker_dist = own.getDistanceTo(attacker)
-            if attacker_dist >= 150 or attacker["death"]:
+            if attacker_health < 1:
                 own["run"] = own["aim"] = False
                 own["item"] = 0
                 own["normal"] = True
                 return
 
             attacker_vec = own.worldPosition - attacker.worldPosition
-            if brain != 0:
-                if attacked_action(cont, own, armature, front_sensor, front_lower_sensor,  attacker, attacker_dist, attacker_vec):
-                    return
+            if brain != 0 and attacked_action(cont, own, armature, front_sensor, front_lower_sensor, attacker, attacker_dist, attacker_vec):
+                return
             
         if front_blocked:
                 
