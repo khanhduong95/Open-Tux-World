@@ -23,8 +23,8 @@ scene = common.scene
 global_dict = logic.globalDict
 terrain_spawner = scene.objects["terrain_spawner"]
 
-def close_distance(own_pos, terrain_loc, dist_const):
-    return common.getDistance([terrain_loc[0] - own_pos[0], terrain_loc[1] - own_pos[1], terrain_loc[2] - own_pos[2]]) < dist_const
+# def close_distance(own_pos, terrain_loc, dist_const):
+#     return common.getDistance([terrain_loc[0] - own_pos[0], terrain_loc[1] - own_pos[1], terrain_loc[2] - own_pos[2]]) < dist_const
 
 def spawn_AI(own, terrain):
     AI_count = len(global_dict["AI_list"])

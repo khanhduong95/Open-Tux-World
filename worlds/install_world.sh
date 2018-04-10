@@ -6,7 +6,6 @@ do
     ${2:-blender} -b "$file" -P ${BASEDIR}/separate_terrain_files.py &
 done
 wait
-cp ${WORLDDIR}/terrain_config.json ${TMPDIR}
 for file in ${TMPDIR}/*.blend
 do
     ${2:-blender} -b "$file" -P ${BASEDIR}/cut_terrain.py &

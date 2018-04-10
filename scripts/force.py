@@ -23,18 +23,18 @@ logic = common.logic
 scene = common.scene
 
 def border_check(own):
-    if own.worldPosition[0] < -common.TERRAIN_BORDER_X:
-        own.worldPosition[0] = -common.TERRAIN_BORDER_X
-    elif own.worldPosition[0] > common.TERRAIN_BORDER_X:
-        own.worldPosition[0] = common.TERRAIN_BORDER_X
-    if own.worldPosition[1] < -common.TERRAIN_BORDER_Y:
-        own.worldPosition[1] = -common.TERRAIN_BORDER_Y
-    elif own.worldPosition[0] > common.TERRAIN_BORDER_Y:
-        own.worldPosition[1] = common.TERRAIN_BORDER_Y
-    if own.worldPosition[2] <= 0:
-        own.worldPosition = scene.objects["terrain_spawner"].worldPosition
-        if own.worldPosition[2] <= 0:
-            own.worldPosition[2] += 5
+    if own.worldPosition[0] < common.TERRAIN_BORDER_MIN_X:
+        own.worldPosition[0] = common.TERRAIN_BORDER_MIN_X
+    elif own.worldPosition[0] > common.TERRAIN_BORDER_MAX_X:
+        own.worldPosition[0] = common.TERRAIN_BORDER_MAX_X
+    if own.worldPosition[1] < common.TERRAIN_BORDER_MIN_Y:
+        own.worldPosition[1] = common.TERRAIN_BORDER_MIN_Y
+    elif own.worldPosition[1] > common.TERRAIN_BORDER_MAX_Y:
+        own.worldPosition[1] = common.TERRAIN_BORDER_MAX_Y
+    # if own.worldPosition[2] <= 0:
+    #     own.worldPosition = scene.objects["terrain_spawner"].worldPosition
+    #     if own.worldPosition[2] <= 0:
+    #         own.worldPosition[2] += 5
 
 def main(cont):
     own = cont.owner

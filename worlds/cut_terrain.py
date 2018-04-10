@@ -21,12 +21,14 @@ layers = scene.layers
 current_file = bpy.data.filepath
 file_name = bpy.path.basename(current_file)
 
-with open(bpy.path.abspath("//") + "terrain_config.json", "r") as json_file:
-    distance_config = json.load(json_file)
-    physics_distance = distance_config["physics_distance"]
-    image_distance = distance_config["image_distance"]
-
-#ops.object.mode_set(mode='OBJECT')
+max_x = 0 
+min_x = 0 
+max_y = 0
+min_y = 0
+with open(os.path.join(bpy.path.abspath("//"), os.pardir, "terrain_config.json"), "r") as json_file:
+    terrain_config = json.load(json_file)
+    physics_distance = terrain_config["physics_distance"]
+    image_distance = terrain_config["image_distance"]
 
 for ob in objects:
     if ob not in obj_list:
@@ -65,6 +67,10 @@ def get_distance(loc1, loc2):
 
 def map_physics_group(terrain_group):
     global terrain_list
+    global max_x
+    global min_x
+    global max_y
+    global min_y
     print("Mapping terrain group: "+terrain_group)
     select_layer(2)
     ops.object.group_instance_add(name=terrain_group, location=(0,0,0))
@@ -82,6 +88,14 @@ def map_physics_group(terrain_group):
             for z in keys[2]:
                 if x+"_"+y+"_"+z not in terrain_list["physics"]:
                     terrain_list["physics"][x+"_"+y+"_"+z] = []
+                if terrain_loc[0] < min_x:
+                    min_x = terrain_loc[0]
+                elif terrain_loc[0] > max_x:
+                    max_x = terrain_loc[0]
+                if terrain_loc[1] < min_y:
+                    min_y = terrain_loc[1]
+                elif terrain_loc[1] > max_y:
+                    max_y = terrain_loc[1]
                 terrain_list["physics"][x+"_"+y+"_"+z].append({"name": terrain_group, "location": [terrain_loc[0], terrain_loc[1], terrain_loc[2]], "houses": []})
 
     select_layer(1)
@@ -191,7 +205,7 @@ for terrain_name in terrain_names:
     keys = []
     for i in range(2):
         key = terrain_loc[i] // image_distance
-        keys.append([str(key - 2), str(key - 1), str(key), str(key + 1), str(key + 2)])
+        keys.append([str(key - 3), str(key - 2), str(key - 1), str(key), str(key + 1), str(key + 2), str(key + 3)])
 
     for x in keys[0]:        
         for y in keys[1]:
@@ -220,7 +234,11 @@ for house_name in house_names:
             closest = i
 
     terrain_list["physics"][x+"_"+y+"_"+z][closest]["houses"].append({"location": [house_loc[0], house_loc[1], house_loc[2]], "rotation": [house_rot[0], house_rot[1], house_rot[2]]})
-            
+
+terrain_list["min_x"] = min_x
+terrain_list["max_x"] = max_x
+terrain_list["min_y"] = min_y
+terrain_list["max_y"] = max_y
 json.dump(terrain_list, open(os.path.join(bpy.path.abspath("//"), os.pardir, file_name[:-len(".blend")] + "_dict.json"), "w"))
 
 select_layer(0)

@@ -27,7 +27,7 @@ global_dict = logic.globalDict
 def otw_main(cont):
     for file in os.listdir("worlds"):
         if not file.endswith(".py") and not file.endswith(".sh"):
-            global_dict["terrain_base_dir"] = "worlds/" + file + "/"
+            global_dict["terrain_base_dir"] = os.path.join("worlds", file, "")
             cont.activate(cont.actuators["Game"])
             break
 
@@ -35,18 +35,23 @@ def main():
     base_dir = global_dict["terrain_base_dir"]
     global_dict["terrain_dict"] = {"image": {}, "physics": {}}
 
-    # with open(base_dir + "terrain_dict.json", "r") as json_file:
-    #     global_dict["terrain_dict"] = json.load(json_file)
     with open(base_dir + "terrain_config.json", "r") as json_file:
-        terrain_max_distance = json.load(json_file)
-        common.TERRAIN_IMAGE_MAX_DISTANCE = terrain_max_distance["image_distance"]
-        common.TERRAIN_PHYSICS_MAX_DISTANCE = terrain_max_distance["physics_distance"]
-        # logic.LibLoad("//" + base_dir + "terrain_data.blend", "Scene")
+        terrain_config = json.load(json_file)
+        common.TERRAIN_IMAGE_MAX_DISTANCE = terrain_config["image_distance"]
+        common.TERRAIN_PHYSICS_MAX_DISTANCE = terrain_config["physics_distance"]
         
     for file in os.listdir(base_dir):
         if file.endswith("_dict.json"):
             with open(base_dir + file, "r") as json_file:
                 json_data = json.load(json_file)
+                if json_data["max_x"] > common.TERRAIN_BORDER_MAX_X:
+                    common.TERRAIN_BORDER_MAX_X = json_data["max_x"]
+                if json_data["min_x"] < common.TERRAIN_BORDER_MIN_X:
+                    common.TERRAIN_BORDER_MIN_X = json_data["min_x"]
+                if json_data["max_y"] > common.TERRAIN_BORDER_MAX_Y:
+                    common.TERRAIN_BORDER_MAX_Y = json_data["max_y"]
+                if json_data["min_y"] < common.TERRAIN_BORDER_MIN_Y:
+                    common.TERRAIN_BORDER_MIN_Y = json_data["min_y"]
                 for physics_or_image in ["image", "physics"]:
                     for key, value in json_data[physics_or_image].items():
                         if key in global_dict["terrain_dict"][physics_or_image]:

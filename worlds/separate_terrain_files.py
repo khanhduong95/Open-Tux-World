@@ -1,6 +1,6 @@
 import bpy
-import bmesh
 import os
+import json
 
 ops = bpy.ops
 wm = ops.wm
