@@ -46,7 +46,7 @@ def main(cont):
         except:
             continue
 
-    if "AI" in own:
+    if "AI" in parent:
         global_dict["AI_list"].remove(parent_id)
 
     parent.endObject()
