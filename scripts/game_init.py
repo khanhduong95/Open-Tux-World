@@ -27,7 +27,7 @@ global_dict = logic.globalDict
 def otw_main(cont):
     for file in os.listdir("worlds"):
         if not file.endswith(".py") and not file.endswith(".sh"):
-            global_dict["terrain_base_dir"] = os.path.join("worlds", file, "")
+            global_dict["terrain_base_dir"] = os.path.join("worlds", file, "build", "")
             cont.activate(cont.actuators["Game"])
             break
 
@@ -35,7 +35,7 @@ def main():
     base_dir = global_dict["terrain_base_dir"]
     global_dict["terrain_dict"] = {"image": {}, "physics": {}}
 
-    with open(base_dir + "terrain_config.json", "r") as json_file:
+    with open(os.path.join(base_dir, os.pardir, "terrain_config.json"), "r") as json_file:
         terrain_config = json.load(json_file)
         common.TERRAIN_IMAGE_MAX_DISTANCE = terrain_config["image_distance"]
         common.TERRAIN_PHYSICS_MAX_DISTANCE = terrain_config["physics_distance"]

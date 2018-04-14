@@ -19,9 +19,9 @@ for obj in bpy.data.objects:
     if obj_name.startswith("terrain") and not obj_name.endswith("_physics"):
         obj_list.append(obj_name)
 
-tmp_dir = bpy.path.abspath("//") + "tmp"
-if not os.path.exists(tmp_dir):
-    os.makedirs(tmp_dir)
+build_dir = bpy.path.abspath("//") + "build"
+if not os.path.exists(build_dir):
+    os.makedirs(build_dir)
     
 for obj_name in obj_list:
     ops = bpy.ops
@@ -38,7 +38,7 @@ for obj_name in obj_list:
             scene.objects.active = obj
             obj.select = True
     ops.object.delete(use_global = True)
-    wm.save_as_mainfile(filepath = os.path.join(tmp_dir, obj_name + ".blend"), copy = True)
+    wm.save_as_mainfile(filepath = os.path.join(build_dir, obj_name + ".blend"), copy = True)
     wm.revert_mainfile()
     
 wm.quit_blender()

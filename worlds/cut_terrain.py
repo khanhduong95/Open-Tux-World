@@ -264,8 +264,8 @@ terrain_list["min_x"] = min_x
 terrain_list["max_x"] = max_x
 terrain_list["min_y"] = min_y
 terrain_list["max_y"] = max_y
-json.dump(terrain_list, open(os.path.join(bpy.path.abspath("//"), os.pardir, file_name[:-len(".blend")] + "_dict.json"), "w"))
+json.dump(terrain_list, open(os.path.join(bpy.path.abspath("//"), file_name[:-len(".blend")] + "_dict.json"), "w"))
 
 select_layer(0)
-wm.save_as_mainfile(filepath = os.path.join(bpy.path.abspath("//"), os.pardir, file_name))
+wm.save_as_mainfile(filepath = os.path.join(bpy.path.abspath("//"), file_name))
 wm.quit_blender()
