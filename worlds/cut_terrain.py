@@ -29,6 +29,8 @@ with open(os.path.join(bpy.path.abspath("//"), os.pardir, "terrain_config.json")
     terrain_config = json.load(json_file)
     physics_distance = terrain_config["physics_distance"]
     image_distance = terrain_config["image_distance"]
+    physics_max_neighbors = terrain_config["physics_max_neighbors"] + 1
+    image_max_neighbors = terrain_config["image_max_neighbors"] + 1
 
 for ob in objects:
     if ob not in obj_list:
@@ -81,7 +83,11 @@ def map_physics_group(terrain_group):
     keys = []
     for i in range(3):
         key = terrain_loc[i] // physics_distance
-        keys.append([str(key - 3), str(key - 2), str(key - 1), str(key), str(key + 1), str(key + 2), str(key + 3)])
+        neighbors = [str(key)]
+        for j in range(1, physics_max_neighbors):
+            neighbors.append(str(key + j))
+            neighbors.append(str(key - j))
+        keys.append(neighbors)
 
     for x in keys[0]:        
         for y in keys[1]:
@@ -110,11 +116,11 @@ def cut_terrain(obj_name, obj_suffix):
     terrain.select = True
     ops.object.origin_set(type='ORIGIN_GEOMETRY')    
     ops.object.select_all(action='DESELECT')
-    cut_n = 0
     global terrain_list
     global obj_list
     global group_list
     if obj_length > 5 and obj_length % 3 == 0:
+        cut_n = 0
         range_square = 9
         for i in range(range_square):
             scene.objects.active = terrain
@@ -125,14 +131,24 @@ def cut_terrain(obj_name, obj_suffix):
             bm = bmesh.from_edit_mesh(me)
             ops.mesh.select_all(action='DESELECT')
             ########################
-            sub_obj_length = int(obj_length/3)
-            range_length = range(sub_obj_length)                
+            sub_obj_length = obj_length // 3
+            range_length = range(sub_obj_length + 1)
+            connected_faces = {}
+            
+            bm.verts.ensure_lookup_table()
             for m in range_length:
                 for n in range_length:
-                    bm.faces.ensure_lookup_table()
-                    bm.faces[m + n*(obj_length - cut_n)].select = True
-                    bmesh.update_edit_mesh(me, True)
-                    bm.faces.ensure_lookup_table()
+                    vert = bm.verts[m + n*(obj_length + 1 - cut_n) + (cut_n if i < 6 and n == sub_obj_length else 0)]
+                    for face in vert.link_faces:
+                        face_index = str(face.index)
+                        try:
+                            connected_faces[face_index].add(vert.index)
+                        except:
+                            connected_faces[face_index] = set([vert.index])
+                        if len(connected_faces[face_index]) > 3:
+                            face.select = True
+            bmesh.update_edit_mesh(me, True)
+            bm.verts.ensure_lookup_table()
             if cut_n < obj_length - sub_obj_length:
                 cut_n += sub_obj_length
             else:
@@ -172,7 +188,12 @@ def cut_terrain(obj_name, obj_suffix):
             ops.mesh.select_all(action='DESELECT')
             ########################
             bm.faces.ensure_lookup_table()
+            # try:
             bm.faces[0].select = True
+            # except:
+            #     wm.save_as_mainfile(filepath = os.path.join(bpy.path.abspath("//"), os.pardir, file_name))
+            #     wm.quit_blender()
+                
             bmesh.update_edit_mesh(me, True)
             bm.faces.ensure_lookup_table()                
             ########################
@@ -182,7 +203,7 @@ def cut_terrain(obj_name, obj_suffix):
             ops.object.mode_set(mode='OBJECT')
             ops.object.select_all(action='DESELECT')
             for ob in objects:
-                if ob not in obj_list and not ob.name.endswith("_physics_group"):
+                if ob not in obj_list and not ob.name.endswith(obj_suffix + "_group"):
                     ob.name = sub_obj_name+obj_suffix
                     obj_list.append(ob)
                     break
@@ -205,7 +226,11 @@ for terrain_name in terrain_names:
     keys = []
     for i in range(2):
         key = terrain_loc[i] // image_distance
-        keys.append([str(key - 3), str(key - 2), str(key - 1), str(key), str(key + 1), str(key + 2), str(key + 3)])
+        neighbors = [str(key)]
+        for j in range(1, image_max_neighbors):
+            neighbors.append(str(key + j))
+            neighbors.append(str(key - j))
+        keys.append(neighbors)
 
     for x in keys[0]:        
         for y in keys[1]:
@@ -226,9 +251,9 @@ for house_name in house_names:
 
     nearest_terrains = terrain_list["physics"][x+"_"+y+"_"+z]
     for i in range(len(nearest_terrains)):
-        terrain = nearest_terrains[i]
-        terrain_loc = terrain["location"]
-        dist = get_distance(terrain_loc, house_loc)
+        nearest_terrain = nearest_terrains[i]
+        nearest_terrain_loc = nearest_terrain["location"]
+        dist = get_distance(nearest_terrain_loc, house_loc)
         if closest_dist < 0 or dist < closest_dist:
             closest_dist = dist
             closest = i

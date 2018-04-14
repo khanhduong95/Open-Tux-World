@@ -40,6 +40,7 @@ def main():
         common.TERRAIN_IMAGE_MAX_DISTANCE = terrain_config["image_distance"]
         common.TERRAIN_PHYSICS_MAX_DISTANCE = terrain_config["physics_distance"]
         
+    global_dict["loaded_terrain_libs"] = {}
     for file in os.listdir(base_dir):
         if file.endswith("_dict.json"):
             with open(base_dir + file, "r") as json_file:
@@ -59,8 +60,8 @@ def main():
                         else:
                             global_dict["terrain_dict"][physics_or_image][key] = value
                     
-        if file.endswith(".blend") and not file.endswith("_src.blend"):
-            logic.LibLoad("//" + base_dir + file, "Scene")
+        # if file.endswith(".blend") and not file.endswith("_src.blend"):
+        #     logic.LibLoad("//" + base_dir + file, "Scene")
 
     print("Terrain folder " + base_dir + " loaded")
         
@@ -68,6 +69,7 @@ def main():
     global_dict["terrain_image_list"] = {}        
     global_dict["player_list"] = []        
     global_dict["AI_list"] = []
+
     scene.objects["player_spawn_point"]["init"] = True
 
     print("Game started")

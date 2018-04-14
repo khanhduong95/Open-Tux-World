@@ -34,18 +34,19 @@ def spawn_AI(own, terrain):
         dist_cam = terrain.getDistanceTo(own.parent.children["camera_track"].children["camera_track2"].children["cam_dir2"].children["cam_dir"].children["cam_pos"])
         if common.AI_SPAWN_MIN_DISTANCE < dist_player < common.AI_SPAWN_MAX_DISTANCE and dist_player > dist_cam:
             terrain_spawner.worldPosition = terrain.worldPosition
-            terrain_spawner.worldPosition[2] += 2
+            terrain_spawner.worldPosition[2] += 1
             AI = scene.addObject("AI_penguin", terrain_spawner, 0).groupMembers["AI_Cube"]
             print("AI " + str(id(AI)) + " spawned")
             vec = AI.worldPosition - own.worldPosition
             AI.alignAxisToVect([vec.x, vec.y, 0], 0, 1)#point to player
 
-def check_near_terrains(own, own_id, own_pos, physics_or_image, max_distance):
+def check_near_terrains(own, own_id, own_pos, own_is_physics, max_distance):
     x = str(own_pos[0] // max_distance)
     y = str(own_pos[1] // max_distance)
     key = x+"_"+y
+    physics_or_image = "physics" if own_is_physics else "image"
 
-    if physics_or_image == "physics":
+    if own_is_physics:
         z = str(own_pos[2] // max_distance)
         key += "_"+z
     
@@ -62,7 +63,7 @@ def check_near_terrains(own, own_id, own_pos, physics_or_image, max_distance):
         terrain_y = str(terrain_pos[1] // max_distance)
         terrain_key = terrain_x + "_" + terrain_y
 
-        if physics_or_image == "physics":
+        if own_is_physics:
             terrain_z = str(terrain_pos[2] // max_distance)
             terrain_key += "_" + terrain_z
             
@@ -73,11 +74,15 @@ def check_near_terrains(own, own_id, own_pos, physics_or_image, max_distance):
             spawn_AI(own, scene.objects.from_id(terrain_info[terrain_key]["id"]))
             
         except:
+            if not own_is_physics:
+                logic.LibLoad("//" + global_dict["terrain_base_dir"] + terrain_name + ".blend", "Scene")
+                
             terrain_spawner.worldPosition = terrain_pos
+
             new_terrain = scene.addObject(terrain_name, terrain_spawner, 0)
             terrain_loc = scene.addObject("terrain_loc", terrain_spawner, 0)
             terrain_loc["terrain_name"] = terrain_name
-            if physics_or_image == "physics":
+            if own_is_physics:
                 for terrain_mem in new_terrain.groupMembers:                
                     terrain_mem.setParent(terrain_loc, 0, 0)
                 terrain_loc["physics"] = True
@@ -87,7 +92,7 @@ def check_near_terrains(own, own_id, own_pos, physics_or_image, max_distance):
             global_dict[terrain_list_name][terrain_name][terrain_key] = {"players": [own_id], "id": terrain_id}
             print("Terrain " + physics_or_image + " " + terrain_name + " " + str(terrain_id) + " added")
 
-            if physics_or_image == "image":
+            if not own_is_physics:
                 continue
             
             try:
@@ -103,5 +108,5 @@ def main(cont):
     own = cont.owner
     own_id = id(own)
     own_pos = own.worldPosition
-    check_near_terrains(own, own_id, own_pos, "image", common.TERRAIN_IMAGE_MAX_DISTANCE)
-    check_near_terrains(own, own_id, own_pos, "physics", common.TERRAIN_PHYSICS_MAX_DISTANCE)
+    check_near_terrains(own, own_id, own_pos, False, common.TERRAIN_IMAGE_MAX_DISTANCE)
+    check_near_terrains(own, own_id, own_pos, True, common.TERRAIN_PHYSICS_MAX_DISTANCE)

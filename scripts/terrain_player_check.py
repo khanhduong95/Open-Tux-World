@@ -61,3 +61,5 @@ def main(cont):
         del global_dict[terrain_list_name][own_name][key]
         own.endObject()
         print("Terrain " + physics_or_image + " " + own_name + " " + str(own_id) + " removed")
+        if not own_is_physics:
+            logic.LibFree("//" + global_dict["terrain_base_dir"] + own_name + ".blend")
