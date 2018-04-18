@@ -27,39 +27,66 @@ def main(cont):
     own_id = id(own)
     own_name = own["terrain_name"]
     own_is_physics = own["physics"]
-    physics_or_image = "physics" if own_is_physics else "image"
-    min_dist = common.TERRAIN_PHYSICS_MAX_DISTANCE if own_is_physics else common.TERRAIN_IMAGE_MAX_DISTANCE
+    if own_is_physics:
+        physics_or_image = "physics"
+        min_dist = common.TERRAIN_PHYSICS_MAX_DISTANCE
+        max_neighbors = common.TERRAIN_PHYSICS_MAX_NEIGHBORS
+    else:
+        physics_or_image = "image"
+        min_dist = common.TERRAIN_IMAGE_MAX_DISTANCE
+        max_neighbors = common.TERRAIN_IMAGE_MAX_NEIGHBORS
+        
     own_pos = own.worldPosition
     terrain_list_name = "terrain_" + physics_or_image + "_list"
     
-    x = str(own_pos[0] // min_dist)
-    y = str(own_pos[1] // min_dist)
-    key = x+"_"+y
+    x = own_pos[0] // min_dist
+    y = own_pos[1] // min_dist
+    # x = str(own_pos[0] // min_dist)
+    # y = str(own_pos[1] // min_dist)
+    # key = x+"_"+y
 
     if own_is_physics:
-        z = str(own_pos[2] // min_dist)
-        key += "_"+z
+        z = own_pos[2] // min_dist
+        # z = str(own_pos[2] // min_dist)
+        # key += "_"+z
+    else:
+        x = int(x)
+        y = int(y)
         
-    for player_id in global_dict[terrain_list_name][own_name][key]["players"]:
+    for player_id in global_dict[terrain_list_name][own_name]["players"]:
         try:
             player = scene.objects.from_id(player_id)
             player_pos = player.worldPosition
-            player_x = str(player_pos[0] // min_dist)
-            player_y = str(player_pos[1] // min_dist)
-            player_key = player_x + "_" + player_y
-            
-            if own_is_physics:
-                player_z = str(player_pos[2] // min_dist)
-                player_key += "_" + player_z
+            player_x = player_pos[0] // min_dist
+            if player_x <= x + max_neighbors and player_x >= x - max_neighbors:
+                player_y = player_pos[1] // min_dist
+                if player_y <= y + max_neighbors and player_y >= y - max_neighbors:
+            # player_x = str(player_pos[0] // min_dist)
+            # player_y = str(player_pos[1] // min_dist)
+            # player_key = player_x + "_" + player_y            
+                    if own_is_physics:
+                        player_z = player_pos[2] // min_dist
+                        if player_z <= z + max_neighbors and player_z >= z - max_neighbors:
+                            continue
+                    else:
+                        continue
+                # player_z = str(player_pos[2] // min_dist)
+                # player_key += "_" + player_z
 
-            if global_dict["terrain_dict"][physics_or_image][player_key]["location"] != own.worldPosition:
-                global_dict[terrain_list_name][own_name][key]["players"].remove(player_id)
+            # if global_dict["terrain_dict"][physics_or_image][player_key]["location"] != own.worldPosition:
+            #     global_dict[terrain_list_name][own_name][key]["players"].remove(player_id)
         except:
-            continue
+            raise
+            print("EXCEPTION OCCURED")
+            
+        global_dict[terrain_list_name][own_name]["players"].remove(player_id)
 
-    if not global_dict[terrain_list_name][own_name][key]["players"]:
-        del global_dict[terrain_list_name][own_name][key]
+    if not global_dict[terrain_list_name][own_name]["players"]:
+        del global_dict[terrain_list_name][own_name]
         own.endObject()
         print("Terrain " + physics_or_image + " " + own_name + " " + str(own_id) + " removed")
         if not own_is_physics:
-            logic.LibFree("//" + global_dict["terrain_base_dir"] + own_name + ".blend")
+            terrain_lib = logic.expandPath("//" + global_dict["terrain_base_dir"] + own_name + ".blend")
+            logic.LibFree(terrain_lib)
+            del global_dict["terrain_dict"][str(x) + "_" + str(y)]
+            print("Terrain library " + terrain_lib + " removed")

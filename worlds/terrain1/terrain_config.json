@@ -1,6 +1,0 @@
-{
-    "image_distance": 1000,
-    "image_max_neighbors": 2,
-    "physics_distance": 100,
-    "physics_max_neighbors": 3
-}

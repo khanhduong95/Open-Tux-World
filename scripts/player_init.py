@@ -20,6 +20,7 @@ from bge import logic
 import json
 
 scene = logic.getCurrentScene()
+global_dict = logic.globalDict
 
 DEFAULT_NUM_ITEM = 20
 DEFAULT_HEALTH = 90
@@ -27,8 +28,7 @@ DEFAULT_HEALTH = 90
 def main(cont):
     own = cont.owner
 
-    logic.globalDict["player_list"].append(id(own))
-
+    global_dict["player_list"].append(id(own))
     own['stamina'] = own['max_stamina']
     own["item"] = 0
     own["health"] = DEFAULT_HEALTH

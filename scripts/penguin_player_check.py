@@ -51,4 +51,4 @@ def main(cont):
 
     parent.endObject()
     own.groupObject.endObject()
-    print("AI " + str(parent_id) + " removed")
+    # print("Penguin " + str(parent_id) + " removed")

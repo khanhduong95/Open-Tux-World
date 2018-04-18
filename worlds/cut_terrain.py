@@ -29,8 +29,8 @@ with open(os.path.join(bpy.path.abspath("//"), os.pardir, "terrain_config.json")
     terrain_config = json.load(json_file)
     physics_distance = terrain_config["physics_distance"]
     image_distance = terrain_config["image_distance"]
-    physics_max_neighbors = terrain_config["physics_max_neighbors"] + 1
-    image_max_neighbors = terrain_config["image_max_neighbors"] + 1
+    physics_max_neighbors = terrain_config["physics_max_neighbors"]
+    image_max_neighbors = terrain_config["image_max_neighbors"]
 
 for ob in objects:
     if ob not in obj_list:
@@ -80,11 +80,12 @@ def map_physics_group(terrain_group):
     ops.object.origin_set(type='ORIGIN_GEOMETRY')
     terrain_loc = new_group.location
 
+    loc_dir = str(int(terrain_loc[0] // image_distance)) + "_" + str(int(terrain_loc[1] // image_distance))
     keys = []
     for i in range(3):
         key = terrain_loc[i] // physics_distance
         neighbors = [str(key)]
-        for j in range(1, physics_max_neighbors):
+        for j in range(1, physics_max_neighbors + 1):
             neighbors.append(str(key + j))
             neighbors.append(str(key - j))
         keys.append(neighbors)
@@ -92,8 +93,9 @@ def map_physics_group(terrain_group):
     for x in keys[0]:        
         for y in keys[1]:
             for z in keys[2]:
-                if x+"_"+y+"_"+z not in terrain_list["physics"]:
-                    terrain_list["physics"][x+"_"+y+"_"+z] = []
+                key = x+"_"+y+"_"+z
+                if key not in terrain_list[loc_dir]["physics"]:
+                    terrain_list[loc_dir]["physics"][key] = []
                 if terrain_loc[0] < min_x:
                     min_x = terrain_loc[0]
                 elif terrain_loc[0] > max_x:
@@ -102,7 +104,7 @@ def map_physics_group(terrain_group):
                     min_y = terrain_loc[1]
                 elif terrain_loc[1] > max_y:
                     max_y = terrain_loc[1]
-                terrain_list["physics"][x+"_"+y+"_"+z].append({"name": terrain_group, "location": [terrain_loc[0], terrain_loc[1], terrain_loc[2]], "houses": []})
+                terrain_list[loc_dir]["physics"][key].append({"name": terrain_group, "location": [terrain_loc[0], terrain_loc[1], terrain_loc[2]], "houses": []})
 
     select_layer(1)
     ops.object.select_all(action='DESELECT')
@@ -188,11 +190,7 @@ def cut_terrain(obj_name, obj_suffix):
             ops.mesh.select_all(action='DESELECT')
             ########################
             bm.faces.ensure_lookup_table()
-            # try:
             bm.faces[0].select = True
-            # except:
-            #     wm.save_as_mainfile(filepath = os.path.join(bpy.path.abspath("//"), os.pardir, file_name))
-            #     wm.quit_blender()
                 
             bmesh.update_edit_mesh(me, True)
             bm.faces.ensure_lookup_table()                
@@ -217,27 +215,21 @@ def cut_terrain(obj_name, obj_suffix):
 ops.object.select_all(action='DESELECT')
 
 select_layer(1)
-terrain_list["image"] = {}
-terrain_list["physics"] = {}
 for terrain_name in terrain_names:
     terrain_image = objects[terrain_name]
     terrain_loc = terrain_image.location
     smooth(terrain_image)
-    keys = []
-    for i in range(2):
-        key = terrain_loc[i] // image_distance
-        neighbors = [str(key)]
-        for j in range(1, image_max_neighbors):
-            neighbors.append(str(key + j))
-            neighbors.append(str(key - j))
-        keys.append(neighbors)
 
-    for x in keys[0]:        
-        for y in keys[1]:
-            if x+"_"+y not in terrain_list["image"]:
-                terrain_list["image"][x+"_"+y] = []
-            terrain_list["image"][x+"_"+y].append({"name": terrain_name, "location": [terrain_loc[0], terrain_loc[1], terrain_loc[2]]})
-    
+    key_x = int(terrain_loc[0] // image_distance)
+    key_y = int(terrain_loc[1] // image_distance)
+    for x in range(key_x - image_max_neighbors, key_x + image_max_neighbors + 1):
+        for y in range(key_y - image_max_neighbors, key_y + image_max_neighbors + 1):
+            loc_dir = str(x) + "_" + str(y)
+            if loc_dir not in terrain_list:
+                terrain_list[loc_dir] = {"image": [], "physics": {}}
+            terrain_list[loc_dir]["image"].append({"name": terrain_name, "location": [terrain_loc[0], terrain_loc[1], terrain_loc[2]]})
+                
+for terrain_name in terrain_names:
     cut_terrain(terrain_name, "_physics")
 
 for house_name in house_names:
@@ -249,7 +241,8 @@ for house_name in house_names:
     y = str(house_loc[1] // physics_distance)
     z = str(house_loc[2] // physics_distance)
 
-    nearest_terrains = terrain_list["physics"][x+"_"+y+"_"+z]
+    loc_dir = str(int(house_loc[0] // image_distance)) + "_" + str(int(house_loc[1] // image_distance))
+    nearest_terrains = terrain_list[loc_dir]["physics"][x+"_"+y+"_"+z]
     for i in range(len(nearest_terrains)):
         nearest_terrain = nearest_terrains[i]
         nearest_terrain_loc = nearest_terrain["location"]
@@ -257,14 +250,21 @@ for house_name in house_names:
         if closest_dist < 0 or dist < closest_dist:
             closest_dist = dist
             closest = i
+    
+    terrain_list[loc_dir]["physics"][x+"_"+y+"_"+z][closest]["houses"].append({"location": [house_loc[0], house_loc[1], house_loc[2]], "rotation": [house_rot[0], house_rot[1], house_rot[2]]})
 
-    terrain_list["physics"][x+"_"+y+"_"+z][closest]["houses"].append({"location": [house_loc[0], house_loc[1], house_loc[2]], "rotation": [house_rot[0], house_rot[1], house_rot[2]]})
+file_name_no_blend = file_name[:-len(".blend")]
+dict_dir = os.path.join(bpy.path.abspath("//"), "dictionaries", "")
+json.dump({"min_x" : min_x, "max_x" : max_x, "min_y" : min_y, "max_y" : max_y}, open(dict_dir + file_name_no_blend + "_borders.json", "w"))
 
-terrain_list["min_x"] = min_x
-terrain_list["max_x"] = max_x
-terrain_list["min_y"] = min_y
-terrain_list["max_y"] = max_y
-json.dump(terrain_list, open(os.path.join(bpy.path.abspath("//"), file_name[:-len(".blend")] + "_dict.json"), "w"))
+for k, v in terrain_list.items():
+    loc_dir = dict_dir + k
+    if not os.path.exists(loc_dir):
+        os.makedirs(loc_dir)
+
+    json.dump(v, open(os.path.join(loc_dir, file_name_no_blend + "_dict.json"), "w"))
+
+# json.dump(terrain_list, open(os.path.join(bpy.path.abspath("//"), "dictionaries", file_name[:-len(".blend")] + "_dict.json"), "w"))
 
 select_layer(0)
 wm.save_as_mainfile(filepath = os.path.join(bpy.path.abspath("//"), file_name))

@@ -22,6 +22,7 @@ for obj in bpy.data.objects:
 build_dir = bpy.path.abspath("//") + "build"
 if not os.path.exists(build_dir):
     os.makedirs(build_dir)
+    os.makedirs(os.path.join(build_dir, "dictionaries"))
     
 for obj_name in obj_list:
     ops = bpy.ops

@@ -27,23 +27,27 @@ global_dict = logic.globalDict
 def otw_main(cont):
     for file in os.listdir("worlds"):
         if not file.endswith(".py") and not file.endswith(".sh"):
-            global_dict["terrain_base_dir"] = os.path.join("worlds", file, "build", "")
+            base_dir = os.path.join("worlds", file, "build", "")
+            global_dict["terrain_base_dir"] = base_dir
+            global_dict["terrain_dict_dir"] = os.path.join(base_dir, "dictionaries", "")
             cont.activate(cont.actuators["Game"])
             break
 
 def main():
     base_dir = global_dict["terrain_base_dir"]
-    global_dict["terrain_dict"] = {"image": {}, "physics": {}}
+    dict_dir = global_dict["terrain_dict_dir"]
+    global_dict["terrain_dict"] = {"loc_dir": ""}
 
     with open(os.path.join(base_dir, os.pardir, "terrain_config.json"), "r") as json_file:
         terrain_config = json.load(json_file)
         common.TERRAIN_IMAGE_MAX_DISTANCE = terrain_config["image_distance"]
         common.TERRAIN_PHYSICS_MAX_DISTANCE = terrain_config["physics_distance"]
+        common.TERRAIN_IMAGE_MAX_NEIGHBORS = terrain_config["image_max_neighbors"]
+        common.TERRAIN_PHYSICS_MAX_NEIGHBORS = terrain_config["physics_max_neighbors"]
         
-    global_dict["loaded_terrain_libs"] = {}
-    for file in os.listdir(base_dir):
-        if file.endswith("_dict.json"):
-            with open(base_dir + file, "r") as json_file:
+    for file in os.listdir(dict_dir):
+        if file.endswith("_borders.json"):
+            with open(dict_dir + file, "r") as json_file:
                 json_data = json.load(json_file)
                 if json_data["max_x"] > common.TERRAIN_BORDER_MAX_X:
                     common.TERRAIN_BORDER_MAX_X = json_data["max_x"]
@@ -53,12 +57,12 @@ def main():
                     common.TERRAIN_BORDER_MAX_Y = json_data["max_y"]
                 if json_data["min_y"] < common.TERRAIN_BORDER_MIN_Y:
                     common.TERRAIN_BORDER_MIN_Y = json_data["min_y"]
-                for physics_or_image in ["image", "physics"]:
-                    for key, value in json_data[physics_or_image].items():
-                        if key in global_dict["terrain_dict"][physics_or_image]:
-                            global_dict["terrain_dict"][physics_or_image][key].extend(value)
-                        else:
-                            global_dict["terrain_dict"][physics_or_image][key] = value
+                # for physics_or_image in ["image", "physics"]:
+                #     for key, value in json_data[physics_or_image].items():
+                #         if key in global_dict["terrain_dict"][physics_or_image]:
+                #             global_dict["terrain_dict"][physics_or_image][key].extend(value)
+                #         else:
+                #             global_dict["terrain_dict"][physics_or_image][key] = value
                     
         # if file.endswith(".blend") and not file.endswith("_src.blend"):
         #     logic.LibLoad("//" + base_dir + file, "Scene")
