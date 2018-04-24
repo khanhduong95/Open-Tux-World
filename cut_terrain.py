@@ -8,6 +8,7 @@ ops = bpy.ops
 wm = ops.wm
 
 terrain_names = []
+terrain_physics_names = []
 house_names = []
 
 obj_list = []
@@ -43,8 +44,11 @@ for gr in groups:
 for obj in objects:
     name = obj.name
     if name.startswith("terrain"):
-        if not name.endswith("_physics"):
+        if name.endswith("_physics"):
+            terrain_physics_names.append(name)
+        else:
             terrain_names.append(name)
+            
     elif name.startswith("house_spawner"):
         house_names.append(name) #add house to list with closest terrain piece and distance                        
 
@@ -80,10 +84,10 @@ def map_physics_group(terrain_group):
     ops.object.origin_set(type='ORIGIN_GEOMETRY')
     terrain_loc = new_group.location
 
-    loc_dir = str(int(terrain_loc[0] // image_distance)) + "_" + str(int(terrain_loc[1] // image_distance))
+    loc_dir = str(int(terrain_loc[0] / image_distance)) + "_" + str(int(terrain_loc[1] / image_distance))
     keys = []
     for i in range(3):
-        key = terrain_loc[i] // physics_distance
+        key = int(terrain_loc[i] / physics_distance)
         neighbors = [str(key)]
         for j in range(1, physics_max_neighbors + 1):
             neighbors.append(str(key + j))
@@ -104,7 +108,8 @@ def map_physics_group(terrain_group):
                     min_y = terrain_loc[1]
                 elif terrain_loc[1] > max_y:
                     max_y = terrain_loc[1]
-                terrain_list[loc_dir]["physics"][key].append({"name": terrain_group, "location": [terrain_loc[0], terrain_loc[1], terrain_loc[2]], "houses": []})
+                terrain_list[loc_dir]["physics"][key].append(terrain_group)
+                terrain_list[loc_dir]["data"][terrain_group] = {"location": [terrain_loc[0], terrain_loc[1], terrain_loc[2]], "houses": []}
 
     select_layer(1)
     ops.object.select_all(action='DESELECT')
@@ -220,42 +225,41 @@ for terrain_name in terrain_names:
     terrain_loc = terrain_image.location
     smooth(terrain_image)
 
-    key_x = int(terrain_loc[0] // image_distance)
-    key_y = int(terrain_loc[1] // image_distance)
+    key_x = int(terrain_loc[0] / image_distance)
+    key_y = int(terrain_loc[1] / image_distance)
     for x in range(key_x - image_max_neighbors, key_x + image_max_neighbors + 1):
         for y in range(key_y - image_max_neighbors, key_y + image_max_neighbors + 1):
             loc_dir = str(x) + "_" + str(y)
             if loc_dir not in terrain_list:
-                terrain_list[loc_dir] = {"image": [], "physics": {}}
-            terrain_list[loc_dir]["image"].append({"name": terrain_name, "location": [terrain_loc[0], terrain_loc[1], terrain_loc[2]]})
+                terrain_list[loc_dir] = {"image": [], "physics": {}, "data": {}}
+            terrain_list[loc_dir]["image"].append(terrain_name)
+            terrain_list[loc_dir]["data"][terrain_name] = {"location": [terrain_loc[0], terrain_loc[1], terrain_loc[2]]}
                 
-for terrain_name in terrain_names:
-    cut_terrain(terrain_name, "_physics")
+for terrain_name in terrain_physics_names:
+    cut_terrain(terrain_name[:-len("_physics")], "_physics")
 
 for house_name in house_names:
     house_loc = objects[house_name].location
     house_rot = objects[house_name].rotation_euler
     closest_dist = -1
-    closest = 0
-    x = str(house_loc[0] // physics_distance)
-    y = str(house_loc[1] // physics_distance)
-    z = str(house_loc[2] // physics_distance)
+    x = str(int(house_loc[0] / physics_distance))
+    y = str(int(house_loc[1] / physics_distance))
+    z = str(int(house_loc[2] / physics_distance))
 
-    loc_dir = str(int(house_loc[0] // image_distance)) + "_" + str(int(house_loc[1] // image_distance))
+    loc_dir = str(int(house_loc[0] / image_distance)) + "_" + str(int(house_loc[1] / image_distance))
     nearest_terrains = terrain_list[loc_dir]["physics"][x+"_"+y+"_"+z]
-    for i in range(len(nearest_terrains)):
-        nearest_terrain = nearest_terrains[i]
-        nearest_terrain_loc = nearest_terrain["location"]
+    for nearest_terrain in nearest_terrains:
+        nearest_terrain_loc = terrain_list[loc_dir]["data"][nearest_terrain]["location"]
         dist = get_distance(nearest_terrain_loc, house_loc)
         if closest_dist < 0 or dist < closest_dist:
             closest_dist = dist
-            closest = i
+            closest = nearest_terrain
     
-    terrain_list[loc_dir]["physics"][x+"_"+y+"_"+z][closest]["houses"].append({"location": [house_loc[0], house_loc[1], house_loc[2]], "rotation": [house_rot[0], house_rot[1], house_rot[2]]})
+    terrain_list[loc_dir]["data"][closest]["houses"].append({"location": [house_loc[0], house_loc[1], house_loc[2]], "rotation": [house_rot[0], house_rot[1], house_rot[2]]})
 
 file_name_no_blend = file_name[:-len(".blend")]
 dict_dir = os.path.join(bpy.path.abspath("//"), "dictionaries", "")
-json.dump({"min_x" : min_x, "max_x" : max_x, "min_y" : min_y, "max_y" : max_y}, open(dict_dir + file_name_no_blend + "_borders.json", "w"))
+json.dump({"min_x": min_x, "max_x": max_x, "min_y": min_y, "max_y": max_y}, open(dict_dir + file_name_no_blend + "_borders.json", "w"))
 
 for k, v in terrain_list.items():
     loc_dir = dict_dir + k

@@ -36,7 +36,7 @@ def otw_main(cont):
 def main():
     base_dir = global_dict["terrain_base_dir"]
     dict_dir = global_dict["terrain_dict_dir"]
-    global_dict["terrain_dict"] = {"loc_dir": ""}
+    global_dict["terrain_dict"] = {}
 
     with open(os.path.join(base_dir, os.pardir, "terrain_config.json"), "r") as json_file:
         terrain_config = json.load(json_file)
@@ -69,8 +69,8 @@ def main():
 
     print("Terrain folder " + base_dir + " loaded")
         
-    global_dict["terrain_physics_list"] = {}        
     global_dict["terrain_image_list"] = {}        
+    global_dict["terrain_physics_list"] = {}        
     global_dict["player_list"] = []        
     global_dict["AI_list"] = []
 

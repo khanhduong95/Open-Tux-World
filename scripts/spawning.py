@@ -25,9 +25,6 @@ scene = common.scene
 global_dict = logic.globalDict
 terrain_spawner = scene.objects["terrain_spawner"]
 
-# def close_distance(own_pos, terrain_loc, dist_const):
-#     return common.getDistance([terrain_loc[0] - own_pos[0], terrain_loc[1] - own_pos[1], terrain_loc[2] - own_pos[2]]) < dist_const
-
 def spawn_AI(own, terrain):
     AI_count = len(global_dict["AI_list"])
 
@@ -42,53 +39,51 @@ def spawn_AI(own, terrain):
             vec = AI.worldPosition - own.worldPosition
             AI.alignAxisToVect([vec.x, vec.y, 0], 0, 1)#point to player
 
+def load_terrain_dict(key):
+    dict_dir = global_dict["terrain_dict_dir"]
+    global_dict["terrain_dict"][key] = {"data": {}, "image": [], "physics": {}, "ready": 0}
+    loc_dir = os.path.join(dict_dir, key, "")
+    for file in os.listdir(loc_dir):
+        if file.endswith("_dict.json"):
+            with open(loc_dir + file, "r") as json_file:
+                json_data = json.load(json_file)
+                global_dict["terrain_dict"][key]["image"].extend(json_data["image"])
+                for k, v in json_data["physics"].items():
+                    if k in global_dict["terrain_dict"][key]["physics"]:
+                        global_dict["terrain_dict"][key]["physics"][k].extend(v)
+                    else:
+                        global_dict["terrain_dict"][key]["physics"][k] = v
+                global_dict["terrain_dict"][key]["data"].update(json_data["data"])
+
 def check_near_terrains(own, own_id, own_pos, own_is_physics, image_key):
     if own_is_physics:
         max_distance = common.TERRAIN_PHYSICS_MAX_DISTANCE
-        x = str(own_pos[0] // max_distance)
-        y = str(own_pos[1] // max_distance)
-        z = str(own_pos[2] // max_distance)
+        x = str(int(own_pos[0] / max_distance))
+        y = str(int(own_pos[1] / max_distance))
+        z = str(int(own_pos[2] / max_distance))
         key = x + "_" + y + "_" + z
         physics_or_image = "physics"
         terrain_dict = global_dict["terrain_dict"][image_key][physics_or_image][key]
     else:
-        max_distance = common.TERRAIN_IMAGE_MAX_DISTANCE
         key = image_key
         physics_or_image = "image"       
         terrain_dict = global_dict["terrain_dict"][image_key][physics_or_image]
-        
+
+    terrain_data = global_dict["terrain_dict"][image_key]["data"]
     terrain_list_name = "terrain_" + physics_or_image + "_list"
-    for terrain in terrain_dict:
-        terrain_name = terrain["name"]
+    for terrain_name in terrain_dict:
+        terrain = terrain_data[terrain_name]
         terrain_pos = terrain["location"]
         try:
             terrain_info = global_dict[terrain_list_name][terrain_name]
-        # except:
-        #     terrain_info = global_dict[terrain_list_name][terrain_name] = {"players": []}
-
-        # terrain_x = str(terrain_pos[0] // max_distance)
-        # terrain_y = str(terrain_pos[1] // max_distance)
-        # terrain_key = terrain_x + "_" + terrain_y
-
-        # if own_is_physics:
-        #     terrain_z = str(terrain_pos[2] // max_distance)
-        #     terrain_key += "_" + terrain_z
-            
-        # try:
             if own_id not in terrain_info["players"]:
                 global_dict[terrain_list_name][terrain_name]["players"].append(own_id)
 
-            spawn_AI(own, scene.objects.from_id(terrain_info["id"]))
+            if own_is_physics:
+                spawn_AI(own, scene.objects.from_id(terrain_info["id"]))
             
         except:
-            if not own_is_physics:
-                terrain_lib = logic.expandPath("//" + global_dict["terrain_base_dir"] + terrain_name + ".blend")
-                if terrain_lib not in logic.LibList():
-                    logic.LibLoad(terrain_lib, "Scene")
-                    print("Terrain library " + terrain_lib + " loaded")
-                
             terrain_spawner.worldPosition = terrain_pos
-
             new_terrain = scene.addObject(terrain_name, terrain_spawner, 0)
             terrain_loc = scene.addObject("terrain_loc", terrain_spawner, 0)
             terrain_loc["terrain_name"] = terrain_name
@@ -113,37 +108,22 @@ def check_near_terrains(own, own_id, own_pos, own_is_physics, image_key):
                     house_physics = scene.addObject("house_physics", terrain_spawner, 0)
                     house_physics.applyRotation(house["rotation"], False)
                     house_physics.setParent(new_terrain, 0, 0)
-            
+
 def main(cont):
     own = cont.owner
     own_id = id(own)
     own_pos = own.worldPosition
     max_distance = common.TERRAIN_IMAGE_MAX_DISTANCE
-    x = str(int(own_pos[0] // max_distance))
-    y = str(int(own_pos[1] // max_distance))
-    key = x + "_" + y
+    x = int(own_pos[0] / max_distance)
+    y = int(own_pos[1] / max_distance)
+    key = str(x) + "_" + str(y)
     if key not in global_dict["terrain_dict"]:
-        dict_dir = global_dict["terrain_dict_dir"]
-        global_dict["terrain_dict"][key] = {"image": [], "physics": {}}
-        loc_dir = os.path.join(dict_dir, key, "")
-        for file in os.listdir(loc_dir):
-            if file.endswith("_dict.json"):
-                with open(loc_dir + file, "r") as json_file:
-                    json_data = json.load(json_file)
-                    global_dict["terrain_dict"][key]["image"].extend(json_data["image"])
-                    for k, v in json_data["physics"].items():
-                        if k in global_dict["terrain_dict"][key]["physics"]:
-                            global_dict["terrain_dict"][key]["physics"][k].extend(v)
-                        else:
-                            global_dict["terrain_dict"][key]["physics"][k] = v
-                    # for physics_or_image in ["image", "physics"]:
-                    #     for k, v in json_data[physics_or_image].items():
-                    #         if k in global_dict["terrain_dict"][physics_or_image]:
-                    #             global_dict["terrain_dict"][physics_or_image][k].extend(v)
-                    #         else:
-                    #             global_dict["terrain_dict"][physics_or_image][k] = v
-        global_dict["terrain_dict"]["loc_dir"] = key
+        load_terrain_dict(key)
+        for image in global_dict["terrain_dict"][key]["image"]:
+            terrain_lib_loader = scene.addObject("terrain_lib_loader", terrain_spawner, 0)
+            terrain_lib_loader["key"] = key
+            terrain_lib_loader["lib_name"] = image
+            terrain_lib_loader.state = logic.KX_STATE2
+    if global_dict["terrain_dict"][key]["ready"] == len(global_dict["terrain_dict"][key]["image"]):
         check_near_terrains(own, own_id, own_pos, False, key)
-    else:
-        # check_near_terrains(own, own_id, own_pos, False, common.TERRAIN_IMAGE_MAX_DISTANCE)
         check_near_terrains(own, own_id, own_pos, True, key)

@@ -1,5 +1,5 @@
 BASEDIR=$(dirname $0)
-WORLDDIR=${BASEDIR}/${1}
+WORLDDIR=${BASEDIR}/worlds/${1}
 BUILDDIR=${WORLDDIR}/build
 for file in ${WORLDDIR}/*_src.blend
 do
