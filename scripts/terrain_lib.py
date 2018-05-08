@@ -1,5 +1,5 @@
 #
-#    Copyright (C) 2016 Dang Duong
+#    Copyright (C) 2018 Dang Duong
 #
 #    This file is part of Open Tux World.
 #
@@ -17,6 +17,7 @@
 #    along with Open Tux World.  If not, see <http://www.gnu.org/licenses/>.
 #
 from scripts import common
+import json
 
 logic = common.logic
 scene = common.scene
@@ -24,12 +25,23 @@ global_dict = logic.globalDict
 
 def main(cont):
     own = cont.owner
-    key = own["key"]
-    terrain_name = own["lib_name"]
-    terrain_lib = logic.expandPath("//" + global_dict["terrain_base_dir"] + terrain_name + ".blend")    
+    terrain_name = own["terrain_name"]
+    terrain_lib = logic.expandPath("//" + global_dict["terrain_base_dir"] + terrain_name + ".blend")
+        
     if terrain_lib not in logic.LibList():
-        logic.LibLoad(terrain_lib, "Scene")
-        global_dict["terrain_dict"][key]["ready"] += 1
-        print("Terrain library " + terrain_lib + " loaded")
+        dict_dir = global_dict["terrain_dict_dir"]
+        with open(dict_dir + terrain_name + "_data.json", "r") as json_file:
+            json_data = json.load(json_file)
+            own.worldPosition = json_data["location"]
+        
+            logic.LibLoad(terrain_lib, "Scene")
+            print("Terrain library " + terrain_lib + " loaded")
+            print("Terrain " + terrain_name +" added")
 
-    own.endObject()
+            if own["physics"]:
+                houses = json_data["houses"]
+                for house_name in houses:
+                    house_physics = scene.addObject("house_physics", scene.objects[house_name], 0)
+                    house_physics.setParent(own, 0, 0)
+
+    own.state = logic.KX_STATE3

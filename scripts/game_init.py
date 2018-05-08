@@ -36,7 +36,6 @@ def otw_main(cont):
 def main():
     base_dir = global_dict["terrain_base_dir"]
     dict_dir = global_dict["terrain_dict_dir"]
-    global_dict["terrain_dict"] = {}
 
     with open(os.path.join(base_dir, os.pardir, "terrain_config.json"), "r") as json_file:
         terrain_config = json.load(json_file)
@@ -57,20 +56,12 @@ def main():
                     common.TERRAIN_BORDER_MAX_Y = json_data["max_y"]
                 if json_data["min_y"] < common.TERRAIN_BORDER_MIN_Y:
                     common.TERRAIN_BORDER_MIN_Y = json_data["min_y"]
-                # for physics_or_image in ["image", "physics"]:
-                #     for key, value in json_data[physics_or_image].items():
-                #         if key in global_dict["terrain_dict"][physics_or_image]:
-                #             global_dict["terrain_dict"][physics_or_image][key].extend(value)
-                #         else:
-                #             global_dict["terrain_dict"][physics_or_image][key] = value
-                    
-        # if file.endswith(".blend") and not file.endswith("_src.blend"):
-        #     logic.LibLoad("//" + base_dir + file, "Scene")
 
     print("Terrain folder " + base_dir + " loaded")
         
-    global_dict["terrain_image_list"] = {}        
-    global_dict["terrain_physics_list"] = {}        
+    global_dict["terrain_image_dict"] = {}
+    global_dict["terrain_physics_dict"] = {}
+    global_dict["active_terrain_list"] = {}        
     global_dict["player_list"] = []        
     global_dict["AI_list"] = []
 

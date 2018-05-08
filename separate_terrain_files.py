@@ -21,7 +21,7 @@ for obj in bpy.data.objects:
 
 build_dir = bpy.path.abspath("//") + "build"
 if not os.path.exists(build_dir):
-    os.makedirs(build_dir)
+    # os.makedirs(build_dir)
     os.makedirs(os.path.join(build_dir, "dictionaries"))
     
 for obj_name in obj_list:
@@ -31,7 +31,6 @@ for obj_name in obj_list:
     context = bpy.context
     scene = context.scene
     layers = scene.layers
-    select_layer(1, ops)
     ops.object.select_all(action='DESELECT')
     print("Separating " + obj_name)
     for obj in objects:
@@ -39,6 +38,9 @@ for obj_name in obj_list:
             scene.objects.active = obj
             obj.select = True
     ops.object.delete(use_global = True)
+    select_layer(1, ops)
+    ops.object.delete(use_global = True)
+    select_layer(0, ops)
     wm.save_as_mainfile(filepath = os.path.join(build_dir, obj_name + ".blend"), copy = True)
     wm.revert_mainfile()
     
