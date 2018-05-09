@@ -59,10 +59,12 @@ def main():
 
     print("Terrain folder " + base_dir + " loaded")
         
-    global_dict["terrain_image_dict"] = {}
+    global_dict["terrain_image_dict"] = set()
     global_dict["terrain_physics_dict"] = {}
-    global_dict["active_terrain_list"] = {}        
-    global_dict["player_list"] = []        
+    global_dict["active_terrain_list"] = set()
+    global_dict["terrain_image_player_list"] = {}
+    global_dict["terrain_physics_player_list"] = {}
+    global_dict["player_list"] = []
     global_dict["AI_list"] = []
 
     scene.objects["player_spawn_point"]["init"] = True

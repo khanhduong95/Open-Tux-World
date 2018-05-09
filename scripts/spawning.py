@@ -39,10 +39,6 @@ def spawn_AI(own, terrain):
             vec = AI.worldPosition - own.worldPosition
             AI.alignAxisToVect([vec.x, vec.y, 0], 0, 1)#point to player
 
-def add_player_to_terrain(player_id, terrain_name):
-    if player_id not in global_dict["active_terrain_list"][terrain_name]:
-        global_dict["active_terrain_list"][terrain_name].append(player_id)
-
 def check_near_terrains(own, own_id, own_pos, own_is_physics):
     dict_dir = global_dict["terrain_dict_dir"]
     if own_is_physics:
@@ -54,11 +50,30 @@ def check_near_terrains(own, own_id, own_pos, own_is_physics):
         max_distance = common.TERRAIN_IMAGE_MAX_DISTANCE
         key = str(int(own_pos[0] / max_distance)) + "_" + str(int(own_pos[1] / max_distance))
 
+    own_terrain_key_name = "terrain_" + physics_or_image + "_key"
+    if key != own[own_terrain_key_name]:
+        old_key = own[own_terrain_key_name]
+        terrain_player_list_name = "terrain_" + physics_or_image + "_player_list"
+        try:
+            global_dict[terrain_player_list_name][key].append(own_id)
+        except:
+            global_dict[terrain_player_list_name][key] = [own_id]
+
+        if old_key != "":
+            global_dict[terrain_player_list_name][old_key].remove(own_id)
+            if not global_dict[terrain_player_list_name][old_key]:
+                global_dict[terrain_player_list_name].pop(old_key, None)
+                if own_is_physics:
+                    global_dict["terrain_physics_dict"].pop(old_key, None)
+                else:
+                    global_dict["terrain_image_dict"].discard(old_key)
+
+        own[own_terrain_key_name] = key
+
     terrain_dict_name = "terrain_" + physics_or_image + "_dict"
     if key in global_dict[terrain_dict_name]:
-        for terrain_name in global_dict[terrain_dict_name][key]:
-            add_player_to_terrain(own_id, terrain_name)
-            if own_is_physics:
+        if own_is_physics:
+            for terrain_name in global_dict[terrain_dict_name][key]:
                 spawn_AI(own, scene.objects[terrain_name])
         return
 
@@ -67,13 +82,15 @@ def check_near_terrains(own, own_id, own_pos, own_is_physics):
     for file in os.listdir(loc_dir):
         if file.endswith(".json"):
             with open(loc_dir + file, "r") as json_file:
-                json_data = json.load(json_file)        
-                global_dict[terrain_dict_name][key] = json_data
+                json_data = json.load(json_file)
+                if own_is_physics:
+                    global_dict["terrain_physics_dict"][key] = json_data
+                else:
+                    global_dict["terrain_image_dict"].add(key)
+                    
                 for terrain_name in json_data:
-                    try:
-                        add_player_to_terrain(own_id, terrain_name)
-                    except:
-                        global_dict["active_terrain_list"][terrain_name] = [own_id]
+                    if terrain_name not in global_dict["active_terrain_list"]:
+                        global_dict["active_terrain_list"].add(terrain_name)
                         terrain_lib_loader = scene.addObject("terrain_lib_loader", terrain_spawner, 0)
                         terrain_lib_loader["physics"] = own_is_physics
                         terrain_lib_loader["terrain_name"] = terrain_name
