@@ -64,6 +64,9 @@ def get_distance(loc1, loc2):
     return math.sqrt(math.pow(loc1[0] - loc2[0], 2) + math.pow(loc1[1] - loc2[1], 2) + math.pow(loc1[2] - loc2[2], 2))
 
 def map_image(terrain_name):
+    # global terrain_list
+    # global terrain_image_list
+    global objects
     print("Mapping terrain image: "+terrain_name)
     terrain_image = objects[terrain_name]
     scene.objects.active = terrain_image
@@ -74,10 +77,12 @@ def map_image(terrain_name):
 
     key_x = int(terrain_loc[0] / image_distance)
     key_y = int(terrain_loc[1] / image_distance)
-    key = str(key_x) + "_" + str(key_y)
-    if key not in terrain_list["image"]:
-        terrain_list["image"][key] = []
-    terrain_list["image"][key].append(terrain_name)
+    for x in range(key_x - image_max_neighbors, key_x + image_max_neighbors + 1):
+        for y in range(key_y - image_max_neighbors, key_y + image_max_neighbors + 1):
+            loc_dir = str(x) + "_" + str(y)
+            if loc_dir not in terrain_list["image"]:
+                terrain_list["image"][loc_dir] = []
+            terrain_list["image"][loc_dir].append(terrain_name)
     terrain_data[terrain_name] = {"location": [terrain_loc[0], terrain_loc[1], terrain_loc[2]]}
     if terrain_name != file_name_no_blend:
         terrain_image_list.append(terrain_name)
@@ -85,6 +90,9 @@ def map_image(terrain_name):
     ops.object.select_all(action='DESELECT')
 
 def map_physics_parent(terrain_parent, terrain):
+    # global terrain_list
+    # global physics_parent_list
+    global objects
     global max_x
     global min_x
     global max_y
@@ -103,21 +111,30 @@ def map_physics_parent(terrain_parent, terrain):
     ops.object.parent_set(type='OBJECT')
     physics_parent_list.append(terrain_parent)
 
-    key_x = int(terrain_loc[0] / physics_distance)
-    key_y = int(terrain_loc[1] / physics_distance)
-    key_z = int(terrain_loc[2] / physics_distance)
-    key = str(key_x) + "_" + str(key_y) + "_" + str(key_z)
-    if key not in terrain_list["physics"]:
-        terrain_list["physics"][key] = []
-    if terrain_loc[0] < min_x:
-        min_x = terrain_loc[0]
-    elif terrain_loc[0] > max_x:
-        max_x = terrain_loc[0]
-    if terrain_loc[1] < min_y:
-        min_y = terrain_loc[1]
-    elif terrain_loc[1] > max_y:
-        max_y = terrain_loc[1]
-    terrain_list["physics"][key].append(terrain_parent)
+    keys = []
+    for i in range(3):
+        key = int(terrain_loc[i] / physics_distance)
+        neighbors = [str(key)]
+        for j in range(1, physics_max_neighbors + 1):
+            neighbors.append(str(key + j))
+            neighbors.append(str(key - j))
+        keys.append(neighbors)
+
+    for x in keys[0]:        
+        for y in keys[1]:
+            for z in keys[2]:
+                key = x+"_"+y+"_"+z
+                if key not in terrain_list["physics"]:
+                    terrain_list["physics"][key] = []
+                if terrain_loc[0] < min_x:
+                    min_x = terrain_loc[0]
+                elif terrain_loc[0] > max_x:
+                    max_x = terrain_loc[0]
+                if terrain_loc[1] < min_y:
+                    min_y = terrain_loc[1]
+                elif terrain_loc[1] > max_y:
+                    max_y = terrain_loc[1]
+                terrain_list["physics"][key].append(terrain_parent)
     terrain_data[terrain_parent] = {"location": [terrain_loc[0], terrain_loc[1], terrain_loc[2]], "houses": []}
 
     ops.object.select_all(action='DESELECT')
@@ -235,16 +252,11 @@ for house_name in house_names:
     house_loc = objects[house_name].location
     house_rot = objects[house_name].rotation_euler
     closest_dist = -1
-    key_x = int(house_loc[0] / physics_distance)
-    key_y = int(house_loc[1] / physics_distance)
-    key_z = int(house_loc[2] / physics_distance)
-    nearest_terrains = []
-    for x in range(key_x - physics_max_neighbors, key_x + physics_max_neighbors + 1):
-        for y in range(key_y - physics_max_neighbors, key_y + physics_max_neighbors + 1):
-            for z in range(key_z - physics_max_neighbors, key_z + physics_max_neighbors + 1):
-                key = str(x) + "_" + str(y) + "_" + str(z)
-                if key in terrain_list["physics"]:
-                    nearest_terrains.extend(terrain_list["physics"][key])                    
+    x = str(int(house_loc[0] / physics_distance))
+    y = str(int(house_loc[1] / physics_distance))
+    z = str(int(house_loc[2] / physics_distance))
+
+    nearest_terrains = terrain_list["physics"][x+"_"+y+"_"+z]
     for nearest_terrain in nearest_terrains:
         nearest_terrain_loc = terrain_data[nearest_terrain]["location"]
         dist = get_distance(nearest_terrain_loc, house_loc)

@@ -35,70 +35,100 @@ def spawn_AI(own, terrain):
             terrain_spawner.worldPosition = terrain.worldPosition
             terrain_spawner.worldPosition[2] += 1
             AI = scene.addObject("AI_penguin", terrain_spawner, 0).groupMembers["AI_Cube"]
-            # print("AI " + str(id(AI)) + " spawned")
+            print("AI " + str(id(AI)) + " spawned")
             vec = AI.worldPosition - own.worldPosition
             AI.alignAxisToVect([vec.x, vec.y, 0], 0, 1)#point to player
 
-def check_near_terrains(own, own_id, own_pos, own_is_physics):
+def check_near_terrains(own, own_is_physics):
+    own_id = id(own)
+    own_pos = own.worldPosition    
     dict_dir = global_dict["terrain_dict_dir"]
+
     if own_is_physics:
         physics_or_image = "physics"
         max_distance = common.TERRAIN_PHYSICS_MAX_DISTANCE
-        key = str(int(own_pos[0] / max_distance)) + "_" + str(int(own_pos[1] / max_distance)) + "_" + str(int(own_pos[2] / max_distance))
+        max_neighbors = common.TERRAIN_PHYSICS_MAX_NEIGHBORS
     else:
         physics_or_image = "image"
         max_distance = common.TERRAIN_IMAGE_MAX_DISTANCE
-        key = str(int(own_pos[0] / max_distance)) + "_" + str(int(own_pos[1] / max_distance))
+        max_neighbors = common.TERRAIN_IMAGE_MAX_NEIGHBORS
+        
+    keys = []
+    key_x = int(own_pos[0] / max_distance)
+    key_y = int(own_pos[1] / max_distance)
+    if own_is_physics:
+        key_z = int(own_pos[2] / max_distance)
+        terrain_key = str(key_x) + "_" + str(key_y) + "_" + str(key_z)
+    else:
+        terrain_key = str(key_x) + "_" + str(key_y)
 
     own_terrain_key_name = "terrain_" + physics_or_image + "_key"
-    if key != own[own_terrain_key_name]:
+    terrain_dict_name = "terrain_" + physics_or_image + "_dict"
+    if terrain_key != own[own_terrain_key_name]:
         old_key = own[own_terrain_key_name]
         terrain_player_list_name = "terrain_" + physics_or_image + "_player_list"
         try:
-            global_dict[terrain_player_list_name][key].append(own_id)
+            global_dict[terrain_player_list_name][terrain_key].append(own_id)
         except:
-            global_dict[terrain_player_list_name][key] = [own_id]
+            global_dict[terrain_player_list_name][terrain_key] = [own_id]
 
         if old_key != "":
             global_dict[terrain_player_list_name][old_key].remove(own_id)
             if not global_dict[terrain_player_list_name][old_key]:
                 global_dict[terrain_player_list_name].pop(old_key, None)
                 if own_is_physics:
-                    global_dict["terrain_physics_dict"].pop(old_key, None)
+                    global_dict[terrain_dict_name].pop(old_key, None)
                 else:
-                    global_dict["terrain_image_dict"].discard(old_key)
+                    global_dict[terrain_dict_name].discard(old_key)
 
-        own[own_terrain_key_name] = key
+        own[own_terrain_key_name] = terrain_key
 
-    terrain_dict_name = "terrain_" + physics_or_image + "_dict"
-    if key in global_dict[terrain_dict_name]:
-        if own_is_physics:
-            for terrain_name in global_dict[terrain_dict_name][key]:
-                spawn_AI(own, scene.objects[terrain_name])
-        return
-
-    loc_dir = os.path.join(dict_dir, physics_or_image, key, "")        
-        
-    for file in os.listdir(loc_dir):
-        if file.endswith(".json"):
-            with open(loc_dir + file, "r") as json_file:
-                json_data = json.load(json_file)
+    for i in range(max_neighbors + 1):
+        min_x = key_x - i
+        max_x = key_x + i
+        for x in range(min_x, max_x + 1):
+            min_y = key_y - i
+            max_y = key_y + i
+            for y in range(min_y, max_y + 1):
                 if own_is_physics:
-                    global_dict["terrain_physics_dict"][key] = json_data
-                else:
-                    global_dict["terrain_image_dict"].add(key)
+                    min_z = key_z - i
+                    max_z = key_z + i                
+                    for z in range(min_z, max_z + 1):
+                        if x == min_x or x == max_x or y == min_y or y == max_y or z == min_z or z == max_z:
+                            keys.append(str(x) + "_" + str(y) + "_" + str(z))
+                elif x == min_x or x == max_x or y == min_y or y == max_y:
+                    keys.append(str(x) + "_" + str(y))                    
+
+    for key in keys:
+        loc_dir = os.path.join(dict_dir, physics_or_image, key, "")
+        if not os.path.exists(loc_dir):
+            continue
+    
+        if key in global_dict[terrain_dict_name]:
+            if own_is_physics:
+                for terrain_name in global_dict[terrain_dict_name][key]:
+                    spawn_AI(own, scene.objects[terrain_name])
+            continue
+        
+        for file in os.listdir(loc_dir):
+            if file.endswith(".json"):
+                with open(loc_dir + file, "r") as json_file:
+                    json_data = json.load(json_file)
+                    if own_is_physics:
+                        global_dict[terrain_dict_name][key] = json_data
+                    else:
+                        global_dict[terrain_dict_name].add(key)
                     
-                for terrain_name in json_data:
-                    if terrain_name not in global_dict["active_terrain_list"]:
-                        global_dict["active_terrain_list"].add(terrain_name)
-                        terrain_lib_loader = scene.addObject("terrain_lib_loader", terrain_spawner, 0)
-                        terrain_lib_loader["physics"] = own_is_physics
-                        terrain_lib_loader["terrain_name"] = terrain_name
-                        terrain_lib_loader.state = logic.KX_STATE2
-            
+                    for terrain_name in json_data:
+                        if terrain_name not in global_dict["active_terrain_list"]:
+                            global_dict["active_terrain_list"].add(terrain_name)
+                            terrain_lib_loader = scene.addObject("terrain_lib_loader", terrain_spawner, 0)
+                            terrain_lib_loader["physics"] = own_is_physics
+                            terrain_lib_loader["terrain_name"] = terrain_name
+                            terrain_lib_loader.state = logic.KX_STATE2
+        return
+                        
 def main(cont):
     own = cont.owner
-    own_id = id(own)
-    own_pos = own.worldPosition    
-    check_near_terrains(own, own_id, own_pos, False)
-    check_near_terrains(own, own_id, own_pos, True)
+    check_near_terrains(own, False)
+    check_near_terrains(own, True)

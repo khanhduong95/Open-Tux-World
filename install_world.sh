@@ -6,8 +6,15 @@ do
     ${2:-blender} -b "$file" -P ${BASEDIR}/separate_terrain_files.py &
 done
 wait
+counter=0
 for file in ${BUILDDIR}/*.blend
 do
-    ${2:-blender} -b "$file" -P ${BASEDIR}/cut_terrain.py &
+    counter=$(expr $counter + 1)
+    if [ $(expr $counter % 8) -eq 0 ]
+    then
+	wait
+    else
+	${2:-blender} -b "$file" -P ${BASEDIR}/cut_terrain.py &	
+    fi
 done
 wait
