@@ -7,12 +7,22 @@ The following instructions apply for building from source only. For binary versi
 - Run the following command:
  <path/to/Blender/executable> -b otw.blend -P install.py
 
-* For developers:
+# For developers:
 - If you want to make modifications to blend files, you should choose *_src.blend files to edit and run the following commands:
  <path/to/Blender/executable> -b terrain_src.blend -P build_terrain.py (for terrain_src.blend)
  <path/to/Blender/executable> -b items_src.blend -P build_item.py (for items_src.blend)
  <path/to/Blender/executable> -b penguin_src.blend -P build_penguin.py (for penguin_src.blend, note that this file contains models from items.blend)
-- To build levels, run the following command for each:
- <path/to/Blender/executable> -b levels/<folder>/terrain_data_src.blend -P levels/cut_terrain.py
+
+ If you are using GNU/Linux or Bash shell, you can run the following command:
+ cd <path/to/game/folder>
+ sh install.sh <path/to/Blender/executable> (optional, default to "blender")
+
+- To build worlds, run the following commands for each:
+ <path/to/Blender/executable> -b <path/to/world/folder>/<src blend file> -P worlds/separate_terrain_files.py
+ <path/to/Blender/executable> -b <path/to/world/folder>/tmp/<blend file> -P worlds/cut_terrain.py
+ 
+ If you are using GNU/Linux or Bash shell, you can run the following command:
+ cd <path/to/game/folder>
+ sh worlds/install_world.sh <path/to/world/folder> <path/to/Blender/executable> (optional, default to "blender")
 
 - Now you can run the game by opening the file named "otw" / "otw.exe" / "otw.app" (which depends on the OS)

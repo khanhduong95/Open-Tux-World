@@ -24,40 +24,47 @@ global_dict = logic.globalDict
 
 def main(cont):
     own = cont.owner
-    own_id = id(own)
+    # own_id = id(own)
     own_name = own["terrain_name"]
     own_is_physics = own["physics"]
-    physics_or_image = "physics" if own_is_physics else "image"
-    min_dist = common.TERRAIN_PHYSICS_MAX_DISTANCE if own_is_physics else common.TERRAIN_IMAGE_MAX_DISTANCE
+    if own_is_physics:
+        min_dist = common.TERRAIN_PHYSICS_MAX_DISTANCE
+        max_neighbors = common.TERRAIN_PHYSICS_MAX_NEIGHBORS
+    else:
+        min_dist = common.TERRAIN_IMAGE_MAX_DISTANCE
+        max_neighbors = common.TERRAIN_IMAGE_MAX_NEIGHBORS
+
     own_pos = own.worldPosition
-    terrain_list_name = "terrain_" + physics_or_image + "_list"
     
-    x = str(own_pos[0] // min_dist)
-    y = str(own_pos[1] // min_dist)
-    key = x+"_"+y
+    x = int(own_pos[0] / min_dist)
+    y = int(own_pos[1] / min_dist)
 
     if own_is_physics:
-        z = str(own_pos[2] // min_dist)
-        key += "_"+z
-        
-    for player_id in global_dict[terrain_list_name][own_name][key]["players"]:
-        try:
-            player = scene.objects.from_id(player_id)
-            player_pos = player.worldPosition
-            player_x = str(player_pos[0] // min_dist)
-            player_y = str(player_pos[1] // min_dist)
-            player_key = player_x + "_" + player_y
-            
-            if own_is_physics:
-                player_z = str(player_pos[2] // min_dist)
-                player_key += "_" + player_z
+        z = int(own_pos[2] / min_dist)
+        for key_x in range(x - max_neighbors, x + max_neighbors + 1):
+            for key_y in range(y - max_neighbors, y + max_neighbors + 1):
+                for key_z in range(z - max_neighbors, z + max_neighbors + 1):
+                    key = str(key_x) + "_" + str(key_y) + "_" + str(key_z)
+                    try:
+                        players = global_dict["terrain_physics_player_list"][key]
+                        if players:
+                            return
+                    except:
+                        continue
+    else:
+        for key_x in range(x - max_neighbors, x + max_neighbors + 1):
+            for key_y in range(y - max_neighbors, y + max_neighbors + 1):
+                key = str(key_x) + "_" + str(key_y)
+                try:
+                    players = global_dict["terrain_image_player_list"][key]
+                    if players:
+                        return
+                except:
+                    continue
 
-            if global_dict["terrain_dict"][physics_or_image][player_key]["location"] != own.worldPosition:
-                global_dict[terrain_list_name][own_name][key]["players"].remove(player_id)
-        except:
-            continue
-
-    if not global_dict[terrain_list_name][own_name][key]["players"]:
-        del global_dict[terrain_list_name][own_name][key]
-        own.endObject()
-        print("Terrain " + physics_or_image + " " + own_name + " " + str(own_id) + " removed")
+    terrain_lib = logic.expandPath("//" + global_dict["terrain_base_dir"] + own_name + ".blend")
+    logic.LibFree(terrain_lib)
+    print("Terrain library " + terrain_lib + " freed")
+    global_dict["active_terrain_list"].discard(own_name)
+    own.endObject()
+    print("Terrain " + own_name + " removed")

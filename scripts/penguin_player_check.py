@@ -46,9 +46,9 @@ def main(cont):
         except:
             continue
 
-    if "AI" in own:
+    if "AI" in parent:
         global_dict["AI_list"].remove(parent_id)
 
     parent.endObject()
     own.groupObject.endObject()
-    print("AI " + str(parent_id) + " removed")
+    # print("Penguin " + str(parent_id) + " removed")

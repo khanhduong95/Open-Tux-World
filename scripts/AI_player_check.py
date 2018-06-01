@@ -20,24 +20,28 @@ from scripts import common
 
 logic = common.logic
 scene = common.scene
+global_dict = logic.globalDict
 
 def main(cont):
     own = cont.owner
     parent = own.parent
-    
-    for player_id in logic.globalDict["player_list"]:
-        try:
-            player = scene.objects.from_id(player_id)
-            dist_loc = own.getDistanceTo(player.children["player_loc"]) #distance to player_loc
-            dist_cam = own.getDistanceTo(player.children["camera_track"].children["camera_track2"].children["cam_dir2"].children["cam_dir"].children["cam_pos"]) #distance to camera
 
-            far_death = parent["health"] < 1 and (dist_loc > common.AI_DIST_LOC_MAX_DEATH or (dist_loc > common.AI_DIST_LOC_MIN_DEATH and dist_loc > dist_cam))
-            far_alive = dist_loc > common.AI_DIST_LOC_MAX or (dist_loc > common.AI_DIST_LOC_MIN and dist_loc > dist_cam)
-            if not far_death and not far_alive:
-                return
-            
-        except:
-            continue
+    own_pos = own.worldPosition
+    terrain_min_dist = common.TERRAIN_IMAGE_MAX_DISTANCE
+    key = str(int(own_pos[0] / terrain_min_dist)) + "_" + str(int(own_pos[1] / terrain_min_dist))
+    if key in global_dict["terrain_image_player_list"]:
+        for player_id in global_dict["terrain_image_player_list"][key]:
+            try:
+                player = scene.objects.from_id(player_id)
+                dist_loc = own.getDistanceTo(player.children["player_loc"]) #distance to player_loc
+                dist_cam = own.getDistanceTo(player.children["camera_track"].children["camera_track2"].children["cam_dir2"].children["cam_dir"].children["cam_pos"]) #distance to camera
+
+                far_death = parent["health"] < 1 and (dist_loc > common.AI_DIST_LOC_MAX_DEATH or (dist_loc > common.AI_DIST_LOC_MIN_DEATH and dist_loc > dist_cam))
+                far_alive = dist_loc > common.AI_DIST_LOC_MAX or (dist_loc > common.AI_DIST_LOC_MIN and dist_loc > dist_cam)
+                if not far_death and not far_alive:
+                    return            
+            except:
+                continue
 
     parent_id = id(parent)
     logic.globalDict["AI_list"].remove(parent_id)
