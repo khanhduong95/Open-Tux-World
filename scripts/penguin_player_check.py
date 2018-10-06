@@ -51,4 +51,4 @@ def main(cont):
 
     parent.endObject()
     own.groupObject.endObject()
-    # print("Penguin " + str(parent_id) + " removed")
+    print("penguin_player_check.py Penguin " + str(parent_id) + " removed")

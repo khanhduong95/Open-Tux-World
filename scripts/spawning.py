@@ -25,19 +25,24 @@ scene = common.scene
 global_dict = logic.globalDict
 terrain_spawner = scene.objects["terrain_spawner"]
 
-def spawn_AI(own, terrain):
-    AI_count = len(global_dict["AI_list"])
+def spawn_AI(own, terrain_parent, AI_count):
+    new_spawn_count = 0
 
-    if AI_count <= common.AI_MAX_COUNT:
-        dist_player = terrain.getDistanceTo(own)
-        dist_cam = terrain.getDistanceTo(own.parent.children["camera_track"].children["camera_track2"].children["cam_dir2"].children["cam_dir"].children["cam_pos"])
-        if common.AI_SPAWN_MIN_DISTANCE < dist_player < common.AI_SPAWN_MAX_DISTANCE and dist_player > dist_cam:
-            terrain_spawner.worldPosition = terrain.worldPosition
-            terrain_spawner.worldPosition[2] += 1
-            AI = scene.addObject("AI_penguin", terrain_spawner, 0).groupMembers["AI_Cube"]
-            print("AI " + str(id(AI)) + " spawned")
-            vec = AI.worldPosition - own.worldPosition
-            AI.alignAxisToVect([vec.x, vec.y, 0], 0, 1)#point to player
+    for terrain in terrain_parent.children:
+        if AI_count <= common.AI_MAX_COUNT and new_spawn_count < common.AI_NEW_SPAWN_MAX_COUNT:
+            dist_player = terrain.getDistanceTo(own)
+            dist_cam = terrain.getDistanceTo(own.parent.children["camera_track"].children["camera_track2"].children["cam_dir2"].children["cam_dir"].children["cam_pos"])
+            if common.AI_SPAWN_MIN_DISTANCE < dist_player < common.AI_SPAWN_MAX_DISTANCE and dist_player > dist_cam:
+                terrain_spawner.worldPosition = terrain.worldPosition
+                terrain_spawner.worldPosition[2] += 1
+                AI = scene.addObject("AI_penguin", terrain_spawner, 0).groupMembers["AI_Cube"]
+                print("spawning.py AI " + str(id(AI)) + " spawned in " +str(terrain))
+                vec = AI.worldPosition - own.worldPosition
+                AI.alignAxisToVect([vec.x, vec.y, 0], 0, 1)#point to player
+                AI_count += 1
+                new_spawn_count += 1
+        else:
+            return
 
 def check_near_terrains(own, own_is_physics):
     own_id = id(own)
@@ -53,7 +58,6 @@ def check_near_terrains(own, own_is_physics):
         max_distance = common.TERRAIN_IMAGE_MAX_DISTANCE
         max_neighbors = common.TERRAIN_IMAGE_MAX_NEIGHBORS
         
-    keys = []
     key_x = int(own_pos[0] / max_distance)
     key_y = int(own_pos[1] / max_distance)
     if own_is_physics:
@@ -61,6 +65,8 @@ def check_near_terrains(own, own_is_physics):
         terrain_key = str(key_x) + "_" + str(key_y) + "_" + str(key_z)
     else:
         terrain_key = str(key_x) + "_" + str(key_y)
+
+    keys = []
 
     own_terrain_key_name = "terrain_" + physics_or_image + "_key"
     terrain_dict_name = "terrain_" + physics_or_image + "_dict"
@@ -73,13 +79,14 @@ def check_near_terrains(own, own_is_physics):
             global_dict[terrain_player_list_name][terrain_key] = [own_id]
 
         if old_key != "":
-            global_dict[terrain_player_list_name][old_key].remove(own_id)
-            if not global_dict[terrain_player_list_name][old_key]:
+            if len(global_dict[terrain_player_list_name][old_key]) < 2:
                 global_dict[terrain_player_list_name].pop(old_key, None)
-                if own_is_physics:
-                    global_dict[terrain_dict_name].pop(old_key, None)
-                else:
-                    global_dict[terrain_dict_name].discard(old_key)
+                # if own_is_physics:
+                #     global_dict[terrain_dict_name].pop(old_key, None)
+                # else:
+                #     global_dict[terrain_dict_name].discard(old_key)
+            else:
+                global_dict[terrain_player_list_name][old_key].remove(own_id)                
 
         own[own_terrain_key_name] = terrain_key
 
@@ -89,7 +96,7 @@ def check_near_terrains(own, own_is_physics):
         for x in range(min_x, max_x + 1):
             min_y = key_y - i
             max_y = key_y + i
-            for y in range(min_y, max_y + 1):
+            for y in range(min_y, max_y + 1):                
                 if own_is_physics:
                     min_z = key_z - i
                     max_z = key_z + i                
@@ -106,8 +113,16 @@ def check_near_terrains(own, own_is_physics):
     
         if key in global_dict[terrain_dict_name]:
             if own_is_physics:
-                for terrain_name in global_dict[terrain_dict_name][key]:
-                    spawn_AI(own, scene.objects[terrain_name])
+                try:
+                    for terrain_name in global_dict[terrain_dict_name][key]:
+                        AI_count = len(global_dict["AI_list"])
+                        if AI_count < common.AI_MAX_COUNT:
+                            spawn_AI(own, scene.objects[terrain_name], AI_count)
+                        else:
+                            break
+                except:
+                    print('spawning.py terrain key '+key+' lost')
+                    
             continue
         
         for file in os.listdir(loc_dir):
@@ -126,6 +141,7 @@ def check_near_terrains(own, own_is_physics):
                             terrain_lib_loader["physics"] = own_is_physics
                             terrain_lib_loader["terrain_name"] = terrain_name
                             terrain_lib_loader.state = logic.KX_STATE2
+                            
         return
                         
 def main(cont):

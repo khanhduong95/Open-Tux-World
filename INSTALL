@@ -18,11 +18,11 @@ The following instructions apply for building from source only. For binary versi
  sh install.sh <path/to/Blender/executable> (optional, default to "blender")
 
 - To build worlds, run the following commands for each:
- <path/to/Blender/executable> -b <path/to/world/folder>/<src blend file> -P worlds/separate_terrain_files.py
- <path/to/Blender/executable> -b <path/to/world/folder>/tmp/<blend file> -P worlds/cut_terrain.py
+ <path/to/Blender/executable> -b <path/to/world/folder>/<src blend file> -P separate_terrain_files.py
+ <path/to/Blender/executable> -b <path/to/world/folder>/build/<blend file> -P cut_terrain.py
  
  If you are using GNU/Linux or Bash shell, you can run the following command:
  cd <path/to/game/folder>
- sh worlds/install_world.sh <path/to/world/folder> <path/to/Blender/executable> (optional, default to "blender")
+ sh install_world.sh <name of the world folder> <path/to/Blender/executable> (optional, default to "blender")
 
 - Now you can run the game by opening the file named "otw" / "otw.exe" / "otw.app" (which depends on the OS)

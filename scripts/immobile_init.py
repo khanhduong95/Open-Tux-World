@@ -20,6 +20,6 @@ from bge import logic
 
 def main(cont):
     own = cont.owner
-    house_image = logic.getCurrentScene().addObject("house_image", own, 0)
-    house_image.setParent(own, 0, 1)                                            
+    immobile_image = logic.getCurrentScene().addObject(own["obj_name"] + "_image", own, 0)
+    immobile_image.setParent(own, 0, 1)                                            
     own.state = logic.KX_STATE2

@@ -35,13 +35,14 @@ def main(cont):
             own.worldPosition = json_data["location"]
         
             logic.LibLoad(terrain_lib, "Scene")
-            print("Terrain library " + terrain_lib + " loaded")
-            print("Terrain " + terrain_name +" added")
+            print("terrain_lib.py Terrain library " + terrain_lib + " loaded")
+            print("terrain_lib.py Terrain " + terrain_name +" added")
 
             if own["physics"]:
-                houses = json_data["houses"]
-                for house_name in houses:
-                    house_physics = scene.addObject("house_physics", scene.objects[house_name], 0)
-                    house_physics.setParent(own, 0, 0)
+                immobiles = json_data["immobiles"]
+                for immobile_name in immobiles:
+                    immobile = scene.objects[immobile_name]
+                    immobile_physics = scene.addObject(immobile["obj_name"] + "_physics", immobile, 0)
+                    immobile_physics.setParent(own, 0, 0)
 
     own.state = logic.KX_STATE3

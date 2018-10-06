@@ -32,7 +32,7 @@ def main(cont):
             if not player["player"]:
                 global_dict["player_list"].remove(player_id)
                 player.groupObject.endObject()
-                print("Player " + str(player_id) + " removed")
+                print("penguin_check.py Player " + str(player_id) + " removed")
                 
         except:
             global_dict["player_list"].remove(player_id)
@@ -43,7 +43,7 @@ def main(cont):
             if not AI["AI"]:
                 global_dict["AI_list"].remove(AI_id)
                 AI.groupObject.endObject()
-                print("AI " + str(AI_id) + " removed")
+                print("penguin_check.py AI " + str(AI_id) + " removed")
                 
         except:
             global_dict["AI_list"].remove(player_id)

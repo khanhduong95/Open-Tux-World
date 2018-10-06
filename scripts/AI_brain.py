@@ -85,7 +85,7 @@ def main(cont):
                 attacker = scene.objects.from_id(own["attacker_ID"])
                 attacker_health = attacker["health"]
                 if 'penguin' not in attacker:
-                    print(attacker)
+                    print("AI_brain.py " + str(attacker))
             except:
                 own["run"] = own["aim"] = False
                 own["item"] = 0

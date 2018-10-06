@@ -57,7 +57,7 @@ def main():
                 if json_data["min_y"] < common.TERRAIN_BORDER_MIN_Y:
                     common.TERRAIN_BORDER_MIN_Y = json_data["min_y"]
 
-    print("Terrain folder " + base_dir + " loaded")
+    print("game_init.py Terrain folder " + base_dir + " loaded")
         
     global_dict["terrain_image_dict"] = set()
     global_dict["terrain_physics_dict"] = {}
@@ -69,4 +69,4 @@ def main():
 
     scene.objects["player_spawn_point"]["init"] = True
 
-    print("Game started")
+    print("game_init.py Game started")

@@ -10,7 +10,7 @@ wm = ops.wm
 
 terrain_names = []
 terrain_physics_names = []
-house_names = []
+immobile_names = []
 
 obj_list = []
 physics_parent_list = []
@@ -47,8 +47,8 @@ for obj in objects:
         else:
             terrain_names.append(name)
             
-    elif name.startswith("house_spawner"):
-        house_names.append(name) #add house to list with closest terrain piece and distance                        
+    elif name.startswith("immobile_spawner"):
+        immobile_names.append(name) #add immobile to list with closest terrain piece and distance                        
 
 terrain_list = {"image": {}, "physics": {}}
 terrain_data = {}
@@ -118,7 +118,7 @@ def map_physics_parent(terrain_parent, terrain):
     elif terrain_loc[1] > max_y:
         max_y = terrain_loc[1]
     terrain_list["physics"][key].append(terrain_parent)
-    terrain_data[terrain_parent] = {"location": [terrain_loc[0], terrain_loc[1], terrain_loc[2]], "houses": []}
+    terrain_data[terrain_parent] = {"location": [terrain_loc[0], terrain_loc[1], terrain_loc[2]], "immobiles": []}
 
     ops.object.select_all(action='DESELECT')
 
@@ -211,6 +211,10 @@ def cut_terrain(obj_name, obj_suffix):
             for ob in objects:
                 if ob not in obj_list and not ob.name.endswith(obj_suffix + "_parent"):
                     ob.name = sub_obj_name+obj_suffix
+                    scene.objects.active = ob
+                    ob.select = True
+                    ops.object.origin_set(type='ORIGIN_GEOMETRY')    
+                    ops.object.select_all(action='DESELECT')
                     obj_list.append(ob)
                     break
         ########################
@@ -231,13 +235,13 @@ for terrain_name in terrain_names:
 for terrain_name in terrain_physics_names:
     cut_terrain(terrain_name[:-len("_physics")], "_physics")
 
-for house_name in house_names:
-    house_loc = objects[house_name].location
-    house_rot = objects[house_name].rotation_euler
+for immobile_name in immobile_names:
+    immobile_loc = objects[immobile_name].location
+    immobile_rot = objects[immobile_name].rotation_euler
     closest_dist = -1
-    key_x = int(house_loc[0] / physics_distance)
-    key_y = int(house_loc[1] / physics_distance)
-    key_z = int(house_loc[2] / physics_distance)
+    key_x = int(immobile_loc[0] / physics_distance)
+    key_y = int(immobile_loc[1] / physics_distance)
+    key_z = int(immobile_loc[2] / physics_distance)
     nearest_terrains = []
     for x in range(key_x - physics_max_neighbors, key_x + physics_max_neighbors + 1):
         for y in range(key_y - physics_max_neighbors, key_y + physics_max_neighbors + 1):
@@ -247,12 +251,12 @@ for house_name in house_names:
                     nearest_terrains.extend(terrain_list["physics"][key])                    
     for nearest_terrain in nearest_terrains:
         nearest_terrain_loc = terrain_data[nearest_terrain]["location"]
-        dist = get_distance(nearest_terrain_loc, house_loc)
+        dist = get_distance(nearest_terrain_loc, immobile_loc)
         if closest_dist < 0 or dist < closest_dist:
             closest_dist = dist
             closest = nearest_terrain
     
-    terrain_data[closest]["houses"].append(house_name)
+    terrain_data[closest]["immobiles"].append(immobile_name)
 
 dict_dir = os.path.join(bpy.path.abspath("//"), "dictionaries", "")
 json.dump({"min_x": min_x, "max_x": max_x, "min_y": min_y, "max_y": max_y}, open(dict_dir + file_name_no_blend + "_borders.json", "w"))

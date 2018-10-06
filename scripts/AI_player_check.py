@@ -45,5 +45,5 @@ def main(cont):
 
     parent_id = id(parent)
     logic.globalDict["AI_list"].remove(parent_id)
-    print("AI " + str(parent_id) + " removed")
+    print("AI_player_check.py AI " + str(parent_id) + " removed")
     parent.endObject()
