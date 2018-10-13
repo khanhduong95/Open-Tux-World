@@ -63,6 +63,7 @@ scene = logic.getCurrentScene()
 def getDistance(vector):
     return math.sqrt(math.pow(vector[0], 2) + math.pow(vector[1], 2) + math.pow(vector[2], 2))
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 def steep_speed(own, steep_dir, aim, speed, forward, back, left, right):
     if aim:
@@ -83,3 +84,5 @@ def steep_speed(own, steep_dir, aim, speed, forward, back, left, right):
     return 0
 =======
 >>>>>>> 99a89667972cec7d9a2bfa8a3e814e7544eac66b
+=======
+>>>>>>> parent of fd4461f... add steep move
