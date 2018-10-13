@@ -19,6 +19,7 @@
 from bge import logic
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 from scripts import common
 
 def aim_move(own, forward, back, left, right):
@@ -43,6 +44,12 @@ def aim_move(own, forward, back, left, right):
     speed = 10 if (left or right) != (forward or back) else (7 if (left or right) and (forward or back) else 0)
     own.setLinearVelocity([-speed if forward else (speed if back else 0), -speed if left else (speed if right else 0), 0], True)
 >>>>>>> parent of fd4461f... add steep move
+=======
+
+def aim_move(own, forward, back, left, right):
+    speed = 10 if (left or right) != (forward or back) else (7 if (left or right) and (forward or back) else 0)
+    own.setLinearVelocity([-speed if forward else (speed if back else 0), -speed if left else (speed if right else 0), 0], True)
+>>>>>>> parent of fd4461f... add steep move
     
 def move(cont, forward_dir, forward, back, left, right, run, run_fast, jump):
     cont.activate(cont.actuators["forward_dir"])
@@ -53,6 +60,7 @@ def move(cont, forward_dir, forward, back, left, right, run, run_fast, jump):
     cont.activate(cont.actuators["Mouse"])
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
     v_x = -30 if run_fast else (-20 if run else -10)
     v_z = 6 if jump else common.steep_speed(own, own.children["steep_dir"], False, -v_x, forward, back, left, right)
@@ -60,6 +68,9 @@ def move(cont, forward_dir, forward, back, left, right, run, run_fast, jump):
 =======
     own.setLinearVelocity([-30 if run_fast else (-20 if run else -10), 0, 6 if jump else 0], True)
 >>>>>>> 99a89667972cec7d9a2bfa8a3e814e7544eac66b
+=======
+    own.setLinearVelocity([-30 if run_fast else (-20 if run else -10), 0, 6 if jump else 0], True)
+>>>>>>> parent of fd4461f... add steep move
 =======
     own.setLinearVelocity([-30 if run_fast else (-20 if run else -10), 0, 6 if jump else 0], True)
 >>>>>>> parent of fd4461f... add steep move

@@ -18,10 +18,13 @@
 #
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 from scripts import common
 
 =======
 >>>>>>> 99a89667972cec7d9a2bfa8a3e814e7544eac66b
+=======
+>>>>>>> parent of fd4461f... add steep move
 =======
 >>>>>>> parent of fd4461f... add steep move
 def turn(own, run, left, right):
@@ -32,6 +35,7 @@ def main(cont, own, forward, back, left, right, aim):
     run = own["run"]
     own.worldOrientation[2] = [0.0, 0.0, 1.0]
     if aim:
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
         if (left or right) != (forward or back):
@@ -56,6 +60,14 @@ def main(cont, own, forward, back, left, right, aim):
         if forward:
             own.setLinearVelocity([-20 if run else -10, 0, 0], True)
 >>>>>>> 99a89667972cec7d9a2bfa8a3e814e7544eac66b
+=======
+        speed = 10 if (left or right) != (forward or back) else (7 if (left or right) and (forward or back) else 0)
+        own.setLinearVelocity([-speed if forward else (speed if back else 0), -speed if left else (speed if right else 0), 0], True)
+            
+    else:
+        if forward:
+            own.setLinearVelocity([-20 if run else -10, 0, 0], True)
+>>>>>>> parent of fd4461f... add steep move
 =======
         speed = 10 if (left or right) != (forward or back) else (7 if (left or right) and (forward or back) else 0)
         own.setLinearVelocity([-speed if forward else (speed if back else 0), -speed if left else (speed if right else 0), 0], True)
