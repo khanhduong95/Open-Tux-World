@@ -17,10 +17,18 @@
 #    along with Open Tux World.  If not, see <http://www.gnu.org/licenses/>.
 #
 from bge import logic
+from scripts import common
 
 def aim_move(own, forward, back, left, right):
-    speed = 10 if (left or right) != (forward or back) else (7 if (left or right) and (forward or back) else 0)
-    own.setLinearVelocity([-speed if forward else (speed if back else 0), -speed if left else (speed if right else 0), 0], True)
+    if (left or right) != (forward or back):
+        speed = 10
+    else:
+        speed = 7 if (left or right) and (forward or back) else 0
+
+    v_x = -speed if forward else (speed if back else 0)
+    v_y = -speed if left else (speed if right else 0)
+    v_z = common.steep_speed(own, own.children["steep_dir"], True, speed, forward, back, left, right)
+    own.setLinearVelocity([v_x, v_y, v_z], True)
     
 def move(cont, forward_dir, forward, back, left, right, run, run_fast, jump):
     cont.activate(cont.actuators["forward_dir"])
@@ -29,7 +37,10 @@ def move(cont, forward_dir, forward, back, left, right, run, run_fast, jump):
     forward_dir.localPosition[1] = -3 if left else (3 if right else 0)
         
     cont.activate(cont.actuators["Mouse"])
-    own.setLinearVelocity([-30 if run_fast else (-20 if run else -10), 0, 6 if jump else 0], True)
+
+    v_x = -30 if run_fast else (-20 if run else -10)
+    v_z = 6 if jump else common.steep_speed(own, own.children["steep_dir"], False, -v_x, forward, back, left, right)
+    own.setLinearVelocity([v_x, 0, v_z], True)
 
 def main(cont, own, forward, back, left, right, jump, aim, fall):
     forward_dir = own.children["camera_track"].children["forward_dir"]

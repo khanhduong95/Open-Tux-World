@@ -62,3 +62,21 @@ scene = logic.getCurrentScene()
 
 def getDistance(vector):
     return math.sqrt(math.pow(vector[0], 2) + math.pow(vector[1], 2) + math.pow(vector[2], 2))
+
+def steep_speed(own, steep_dir, aim, speed, forward, back, left, right):
+    if aim:
+        steep_dir.localPosition[0] = -speed if forward else (speed if back else 0)
+        steep_dir.localPosition[1] = -speed if left else (speed if right else 0)
+    else:
+        steep_dir.localPosition[0] = -speed
+
+    pos_x = steep_dir.worldPosition.x
+    pos_y = steep_dir.worldPosition.y
+    pos_z = steep_dir.worldPosition.z
+    hitPos = steep_dir.rayCast([pos_x, pos_y, pos_z - 1], steep_dir, speed/2, "", 0, 0, 0)
+    hitObj = hitPos[0]
+    if hitObj and id(hitObj) != id(own):
+        steep = hitPos[1][2] - pos_z
+        if steep < 0:
+            return steep
+    return 0
